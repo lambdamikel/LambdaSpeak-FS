@@ -1,0 +1,918 @@
+Archive member included because of file (symbol)
+
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+                              lambdaspeak.o (__udivmodqi4)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+                              lambdaspeak.o (__divmodhi4)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o (exit)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+                              lambdaspeak.o (__do_copy_data)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                              lambdaspeak.o (__do_clear_bss)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o) (__udivmodhi4)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+                              lambdaspeak.o (sprintf)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o) (vfprintf)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o) (strnlen_P)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o) (strnlen)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o) (fputc)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o) (__ultoa_invert)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o) (__prologue_saves__)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o) (__epilogue_restores__)
+
+Discarded input sections
+
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+ .text          0x00000000        0x0 lambdaspeak.o
+ .bss           0x00000000        0x0 lambdaspeak.o
+ .text.process_reset
+                0x00000000        0x0 lambdaspeak.o
+ .text.init_reset_handler
+                0x00000000        0x0 lambdaspeak.o
+ .text.spi_transceive_epson
+                0x00000000        0x0 lambdaspeak.o
+ .text.spi_transfer_epson
+                0x00000000        0x0 lambdaspeak.o
+ .text.spi_begin_epson_transaction
+                0x00000000        0x0 lambdaspeak.o
+ .text.spi_end_epson_transaction
+                0x00000000        0x0 lambdaspeak.o
+ .text.convert_speak_rate
+                0x00000000        0x0 lambdaspeak.o
+ .text.convert_volume
+                0x00000000        0x0 lambdaspeak.o
+ .text.tts_speech_start
+                0x00000000        0x0 lambdaspeak.o
+ .text.tts_speech_char
+                0x00000000        0x0 lambdaspeak.o
+ .text.cont0    0x00000000        0x0 lambdaspeak.o
+ .text.twi_init
+                0x00000000        0x0 lambdaspeak.o
+ .text.twi_start
+                0x00000000        0x0 lambdaspeak.o
+ .text.twi_stop
+                0x00000000        0x0 lambdaspeak.o
+ .text.twi_send
+                0x00000000        0x0 lambdaspeak.o
+ .text.twi_receive
+                0x00000000        0x0 lambdaspeak.o
+ .text.BCDtoDEC
+                0x00000000        0x0 lambdaspeak.o
+ .text.confirmations_off
+                0x00000000        0x0 lambdaspeak.o
+ .text.usart_off
+                0x00000000        0x0 lambdaspeak.o
+ .text.USART_Transmit1
+                0x00000000        0x0 lambdaspeak.o
+ .text.USART_Transmit
+                0x00000000        0x0 lambdaspeak.o
+ .text.USART_ISR_Transmit
+                0x00000000        0x0 lambdaspeak.o
+ .text.speak_dectalk
+                0x00000000        0x0 lambdaspeak.o
+ .text.announce_cur_mode
+                0x00000000        0x0 lambdaspeak.o
+ .rodata.num_quotes
+                0x00000000        0x0 lambdaspeak.o
+ .rodata.pcm_length
+                0x00000000        0x0 lambdaspeak.o
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+ .text          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+ .data          0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+ .bss           0x00000000        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+LOAD lambdaspeak.o
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0xeedc
+ *(.vectors)
+ .vectors       0x00000000       0x7c c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ .progmem.gcc_sw_table
+                0x0000007c      0x100 lambdaspeak.o
+ *(.progmem*)
+ .progmem.data  0x0000017c     0xb021 lambdaspeak.o
+                0x00007b64                COPYRIGHT
+                0x00007d90                line5
+                0x00007d14                line4
+                0x00007c5d                line0
+                0x0000017c                TTS_INIT_DATA
+                0x00007c8a                line1
+                0x00007ce8                line3
+                0x00007ca9                line2
+                0x00007e13                pcm_samples
+                0x00007e07                HAL
+                0x0000b19e                . = ALIGN (0x2)
+ *fill*         0x0000b19d        0x1 00
+                0x0000b19e                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x0000b19e        0x0 linker stubs
+ *(.trampolines*)
+                0x0000b19e                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x0000b19e                __ctors_start = .
+ *(.ctors)
+                0x0000b19e                __ctors_end = .
+                0x0000b19e                __dtors_start = .
+ *(.dtors)
+                0x0000b19e                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x0000b19e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+                0x0000b19e                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x0000b19e        0xc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x0000b1aa       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+                0x0000b1aa                __do_copy_data
+ .init4         0x0000b1c0       0x10 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x0000b1c0                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x0000b1d0        0x8 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+ *(.init9)
+ *(.text)
+ .text          0x0000b1d8        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
+                0x0000b1d8                __vector_22
+                0x0000b1d8                __vector_28
+                0x0000b1d8                __vector_1
+                0x0000b1d8                __vector_24
+                0x0000b1d8                __vector_12
+                0x0000b1d8                __bad_interrupt
+                0x0000b1d8                __vector_3
+                0x0000b1d8                __vector_23
+                0x0000b1d8                __vector_30
+                0x0000b1d8                __vector_25
+                0x0000b1d8                __vector_13
+                0x0000b1d8                __vector_17
+                0x0000b1d8                __vector_19
+                0x0000b1d8                __vector_7
+                0x0000b1d8                __vector_27
+                0x0000b1d8                __vector_5
+                0x0000b1d8                __vector_4
+                0x0000b1d8                __vector_2
+                0x0000b1d8                __vector_29
+                0x0000b1d8                __vector_8
+                0x0000b1d8                __vector_26
+                0x0000b1d8                __vector_14
+                0x0000b1d8                __vector_10
+                0x0000b1dc                . = ALIGN (0x2)
+ *(.text.*)
+ .text.__vector_15
+                0x0000b1dc       0x14 lambdaspeak.o
+                0x0000b1dc                __vector_15
+ .text.__vector_11
+                0x0000b1f0       0x14 lambdaspeak.o
+                0x0000b1f0                __vector_11
+ .text.__vector_9
+                0x0000b204       0x14 lambdaspeak.o
+                0x0000b204                __vector_9
+ .text.__vector_18
+                0x0000b218       0x14 lambdaspeak.o
+                0x0000b218                __vector_18
+ .text.__vector_6
+                0x0000b22c       0x3e lambdaspeak.o
+                0x0000b22c                __vector_6
+ .text.wdt_init
+                0x0000b26a       0x1a lambdaspeak.o
+                0x0000b26a                wdt_init
+ .text.spi_begin_epson
+                0x0000b284       0x2c lambdaspeak.o
+                0x0000b284                spi_begin_epson
+ .text.blink_led_fast
+                0x0000b2b0       0x3c lambdaspeak.o
+                0x0000b2b0                blink_led_fast
+ .text.blink_led_slow
+                0x0000b2ec       0x50 lambdaspeak.o
+                0x0000b2ec                blink_led_slow
+ .text.blink_leds
+                0x0000b33c        0xa lambdaspeak.o
+                0x0000b33c                blink_leds
+ .text.check_for_error
+                0x0000b346       0x28 lambdaspeak.o
+                0x0000b346                check_for_error
+ .text.tts_reset
+                0x0000b36e       0x32 lambdaspeak.o
+                0x0000b36e                tts_reset
+ .text.tts_send_message
+                0x0000b3a0       0x48 lambdaspeak.o
+                0x0000b3a0                tts_send_message
+ .text.tts_send_padding
+                0x0000b3e8       0x24 lambdaspeak.o
+                0x0000b3e8                tts_send_padding
+ .text.tts_get_version
+                0x0000b40c       0x88 lambdaspeak.o
+                0x0000b40c                tts_get_version
+ .text.tts_parse_response
+                0x0000b494       0xce lambdaspeak.o
+                0x0000b494                tts_parse_response
+ .text.tts_configure_audio
+                0x0000b562       0x7c lambdaspeak.o
+                0x0000b562                tts_configure_audio
+ .text.tts_registration
+                0x0000b5de       0x52 lambdaspeak.o
+                0x0000b5de                tts_registration
+ .text.tts_load_chunk
+                0x0000b630       0xba lambdaspeak.o
+                0x0000b630                tts_load_chunk
+ .text.tts_download
+                0x0000b6ea       0x3c lambdaspeak.o
+                0x0000b6ea                tts_download
+ .text.tts_boot_run
+                0x0000b726       0x42 lambdaspeak.o
+                0x0000b726                tts_boot_run
+ .text.tts_speech_progmem
+                0x0000b768       0x98 lambdaspeak.o
+                0x0000b768                tts_speech_progmem
+ .text.tts_configure
+                0x0000b800       0xa0 lambdaspeak.o
+                0x0000b800                tts_configure
+ .text.tts_configure_dectalk
+                0x0000b8a0        0x8 lambdaspeak.o
+                0x0000b8a0                tts_configure_dectalk
+ .text.tts_configure_epson
+                0x0000b8a8        0x8 lambdaspeak.o
+                0x0000b8a8                tts_configure_epson
+ .text.tts_configure_current
+                0x0000b8b0        0xa lambdaspeak.o
+                0x0000b8b0                tts_configure_current
+ .text.tts_set_volume
+                0x0000b8ba       0x4c lambdaspeak.o
+                0x0000b8ba                tts_set_volume
+ .text.tts_stop
+                0x0000b906       0x4c lambdaspeak.o
+                0x0000b906                tts_stop
+ .text.tts_setup
+                0x0000b952       0x68 lambdaspeak.o
+                0x0000b952                tts_setup
+ .text.speak_progmem
+                0x0000b9ba        0xc lambdaspeak.o
+                0x0000b9ba                speak_progmem
+ .text.init_allophones
+                0x0000b9c6      0x2c6 lambdaspeak.o
+                0x0000b9c6                init_allophones
+ .text.init_pins
+                0x0000bc8c       0x1e lambdaspeak.o
+                0x0000bc8c                init_pins
+ .text.stop     0x0000bcaa       0x12 lambdaspeak.o
+                0x0000bcaa                stop
+ .text.cont     0x0000bcbc       0x44 lambdaspeak.o
+                0x0000bcbc                cont
+ .text.proceed  0x0000bd00       0x20 lambdaspeak.o
+                0x0000bd00                proceed
+ .text.setup_pcm
+                0x0000bd20       0x40 lambdaspeak.o
+                0x0000bd20                setup_pcm
+ .text.DECtoBCD
+                0x0000bd60       0x22 lambdaspeak.o
+                0x0000bd60                DECtoBCD
+ .text.ds3231_init
+                0x0000bd82       0x60 lambdaspeak.o
+                0x0000bd82                ds3231_init
+ .text.ds3231_set_24
+                0x0000bde2       0xdc lambdaspeak.o
+                0x0000bde2                ds3231_set_24
+ .text.ds3231_get
+                0x0000bebe      0x1fc lambdaspeak.o
+                0x0000bebe                ds3231_get
+ .text.read_from_cpc_bcd
+                0x0000c0ba       0x1a lambdaspeak.o
+                0x0000c0ba                read_from_cpc_bcd
+ .text.cpc_input_8bit
+                0x0000c0d4       0xba lambdaspeak.o
+                0x0000c0d4                cpc_input_8bit
+ .text.i2c_get_clock_reg
+                0x0000c18e       0x5c lambdaspeak.o
+                0x0000c18e                i2c_get_clock_reg
+ .text.i2c_get_temp
+                0x0000c1ea       0x12 lambdaspeak.o
+                0x0000c1ea                i2c_get_temp
+ .text.speak_progmem_string_from
+                0x0000c1fc       0x1a lambdaspeak.o
+                0x0000c1fc                speak_progmem_string_from
+ .text.speak_copyright_note
+                0x0000c216       0x54 lambdaspeak.o
+                0x0000c216                speak_copyright_note
+ .text.speak_hal9000_quote
+                0x0000c26a       0x2e lambdaspeak.o
+                0x0000c26a                speak_hal9000_quote
+ .text.usart_on0
+                0x0000c298      0x1ea lambdaspeak.o
+                0x0000c298                usart_on0
+ .text.usart_init
+                0x0000c482       0x2e lambdaspeak.o
+                0x0000c482                usart_init
+ .text.__vector_20
+                0x0000c4b0       0x9a lambdaspeak.o
+                0x0000c4b0                __vector_20
+ .text.USART_sendBuffer
+                0x0000c54a       0x50 lambdaspeak.o
+                0x0000c54a                USART_sendBuffer
+ .text.__vector_21
+                0x0000c59a       0x32 lambdaspeak.o
+                0x0000c59a                __vector_21
+ .text.tts_speech_content
+                0x0000c5cc      0x100 lambdaspeak.o
+                0x0000c5cc                tts_speech_content
+ .text.sing_daisy
+                0x0000c6cc       0xd8 lambdaspeak.o
+                0x0000c6cc                sing_daisy
+ .text.tts_speech
+                0x0000c7a4       0xee lambdaspeak.o
+                0x0000c7a4                tts_speech
+ .text.speak    0x0000c892        0xc lambdaspeak.o
+                0x0000c892                speak
+ .text.command_confirm
+                0x0000c89e       0x12 lambdaspeak.o
+                0x0000c89e                command_confirm
+ .text.echo_test_program
+                0x0000c8b0       0x4e lambdaspeak.o
+                0x0000c8b0                echo_test_program
+ .text.cpc_input
+                0x0000c8fe      0x16e lambdaspeak.o
+                0x0000c8fe                cpc_input
+ .text.get_version
+                0x0000ca6c        0xe lambdaspeak.o
+                0x0000ca6c                get_version
+ .text.get_delay
+                0x0000ca7a       0x10 lambdaspeak.o
+                0x0000ca7a                get_delay
+ .text.get_language
+                0x0000ca8a       0x10 lambdaspeak.o
+                0x0000ca8a                get_language
+ .text.get_voice
+                0x0000ca9a       0x10 lambdaspeak.o
+                0x0000ca9a                get_voice
+ .text.get_rate
+                0x0000caaa       0x10 lambdaspeak.o
+                0x0000caaa                get_rate
+ .text.get_volume
+                0x0000caba       0x10 lambdaspeak.o
+                0x0000caba                get_volume
+ .text.get_full_mode
+                0x0000caca       0x40 lambdaspeak.o
+                0x0000caca                get_full_mode
+ .text.get_mode
+                0x0000cb0a       0x26 lambdaspeak.o
+                0x0000cb0a                get_mode
+ .text.slow_getters
+                0x0000cb30       0x12 lambdaspeak.o
+                0x0000cb30                slow_getters
+ .text.medium_getters
+                0x0000cb42       0x16 lambdaspeak.o
+                0x0000cb42                medium_getters
+ .text.fast_getters
+                0x0000cb58       0x16 lambdaspeak.o
+                0x0000cb58                fast_getters
+ .text.spanish  0x0000cb6e       0x14 lambdaspeak.o
+                0x0000cb6e                spanish
+ .text.english  0x0000cb82       0x12 lambdaspeak.o
+                0x0000cb82                english
+ .text.set_buffer_delay
+                0x0000cb94       0x74 lambdaspeak.o
+                0x0000cb94                set_buffer_delay
+ .text.set_buffer_delay_default
+                0x0000cc08        0x8 lambdaspeak.o
+                0x0000cc08                set_buffer_delay_default
+ .text.set_rate
+                0x0000cc10       0x5a lambdaspeak.o
+                0x0000cc10                set_rate
+ .text.set_rate_default
+                0x0000cc6a        0x8 lambdaspeak.o
+                0x0000cc6a                set_rate_default
+ .text.set_volume
+                0x0000cc72       0x5a lambdaspeak.o
+                0x0000cc72                set_volume
+ .text.set_volume_default
+                0x0000cccc        0x8 lambdaspeak.o
+                0x0000cccc                set_volume_default
+ .text.set_voice
+                0x0000ccd4       0x5a lambdaspeak.o
+                0x0000ccd4                set_voice
+ .text.set_voice_default
+                0x0000cd2e        0x8 lambdaspeak.o
+                0x0000cd2e                set_voice_default
+ .text.confirmations_on
+                0x0000cd36       0x10 lambdaspeak.o
+                0x0000cd36                confirmations_on
+ .text.blocking
+                0x0000cd46       0x10 lambdaspeak.o
+                0x0000cd46                blocking
+ .text.blocking_confirmations
+                0x0000cd56        0xe lambdaspeak.o
+                0x0000cd56                blocking_confirmations
+ .text.non_blocking_confirmations
+                0x0000cd64       0x10 lambdaspeak.o
+                0x0000cd64                non_blocking_confirmations
+ .text.non_blocking
+                0x0000cd74        0xe lambdaspeak.o
+                0x0000cd74                non_blocking
+ .text.native_mode_dectalk
+                0x0000cd82       0x14 lambdaspeak.o
+                0x0000cd82                native_mode_dectalk
+ .text.dktronics_mode
+                0x0000cd96       0x14 lambdaspeak.o
+                0x0000cd96                dktronics_mode
+ .text.ssa1_mode
+                0x0000cdaa       0x12 lambdaspeak.o
+                0x0000cdaa                ssa1_mode
+ .text.native_mode_epson
+                0x0000cdbc       0x14 lambdaspeak.o
+                0x0000cdbc                native_mode_epson
+ .text.i2c_set_date
+                0x0000cdd0       0xe6 lambdaspeak.o
+                0x0000cdd0                i2c_set_date
+ .text.i2c_set_time
+                0x0000ceb6       0xb8 lambdaspeak.o
+                0x0000ceb6                i2c_set_time
+ .text.i2c_speak_temp
+                0x0000cf6e       0x72 lambdaspeak.o
+                0x0000cf6e                i2c_speak_temp
+ .text.i2c_get_time_or_date
+                0x0000cfe0      0x1d4 lambdaspeak.o
+                0x0000cfe0                i2c_get_time_or_date
+ .text.i2c_speak_date
+                0x0000d1b4        0x8 lambdaspeak.o
+                0x0000d1b4                i2c_speak_date
+ .text.i2c_speak_time
+                0x0000d1bc        0x8 lambdaspeak.o
+                0x0000d1bc                i2c_speak_time
+ .text.amdrum_mode
+                0x0000d1c4       0x40 lambdaspeak.o
+                0x0000d1c4                amdrum_mode
+ .text.pcm_test
+                0x0000d204       0x62 lambdaspeak.o
+                0x0000d204                pcm_test
+ .text.speech_ready_message
+                0x0000d266       0x5a lambdaspeak.o
+                0x0000d266                speech_ready_message
+ .text.usart_mode_loop
+                0x0000d2c0      0xdda lambdaspeak.o
+                0x0000d2c0                usart_mode_loop
+ .text.speak_buffer
+                0x0000e09a      0x182 lambdaspeak.o
+                0x0000e09a                speak_buffer
+ .text.flush_command
+                0x0000e21c       0x1a lambdaspeak.o
+                0x0000e21c                flush_command
+ .text.process_control
+                0x0000e236      0x1b0 lambdaspeak.o
+                0x0000e236                process_control
+ .text.main     0x0000e3e6      0x43e lambdaspeak.o
+                0x0000e3e6                main
+ .text.__vector_16
+                0x0000e824       0x9e lambdaspeak.o
+                0x0000e824                __vector_16
+ .text.libgcc   0x0000e8c2       0x18 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+                0x0000e8c2                __udivmodqi4
+ .text.libgcc   0x0000e8da       0x26 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+                0x0000e8da                __divmodhi4
+                0x0000e8da                _div
+ .text.libgcc   0x0000e900       0x28 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                0x0000e900                __udivmodhi4
+ .text.avr-libc
+                0x0000e928       0x48 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+                0x0000e928                sprintf
+ .text.avr-libc
+                0x0000e970      0x3ba c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+                0x0000e970                vfprintf
+ .text.avr-libc
+                0x0000ed2a       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+                0x0000ed2a                strnlen_P
+ .text.avr-libc
+                0x0000ed40       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+                0x0000ed40                strnlen
+ .text.avr-libc
+                0x0000ed56       0x58 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+                0x0000ed56                fputc
+ .text.avr-libc
+                0x0000edae       0xbc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+                0x0000edae                __ultoa_invert
+ .text.libgcc   0x0000ee6a       0x38 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+                0x0000ee6a                __prologue_saves__
+ .text.libgcc   0x0000eea2       0x36 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+                0x0000eea2                __epilogue_restores__
+                0x0000eed8                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x0000eed8        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x0000eed8                exit
+                0x0000eed8                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x0000eed8        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ *(.fini0)
+                0x0000eedc                _etext = .
+
+.data           0x00800100      0x92a load address 0x0000eedc
+                0x00800100                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800100      0x907 lambdaspeak.o
+ *(.data*)
+ .data.BLOCKING
+                0x00800a07        0x1 lambdaspeak.o
+ .data.SERIAL_WIDTH
+                0x00800a08        0x1 lambdaspeak.o
+ .data.SERIAL_STOP_BITS
+                0x00800a09        0x1 lambdaspeak.o
+ .data.SERIAL_BAUDRATE
+                0x00800a0a        0x1 lambdaspeak.o
+ .data.VOICE    0x00800a0b        0x1 lambdaspeak.o
+ .data.SPEAK_RATE
+                0x00800a0c        0x1 lambdaspeak.o
+ .data.VOLUME   0x00800a0d        0x1 lambdaspeak.o
+ .data.FLUSH_BUFFER_DELAY
+                0x00800a0e        0x1 lambdaspeak.o
+ .data.CONFIRM_COMMANDS
+                0x00800a0f        0x1 lambdaspeak.o
+ .data.ssa1_and_dk_flush_buffer_after_ms
+                0x00800a10        0x1 lambdaspeak.o
+ .data.ssa_dktronics_loadme_again_after_ms
+                0x00800a11        0x1 lambdaspeak.o
+ *(.rodata)
+ *(.rodata*)
+ .rodata.C.72.2436
+                0x00800a12        0x6 lambdaspeak.o
+ .rodata.C.71.2429
+                0x00800a18        0x6 lambdaspeak.o
+ .rodata.C.12.2171
+                0x00800a1e        0xc lambdaspeak.o
+ *(.gnu.linkonce.d*)
+                0x00800a2a                . = ALIGN (0x2)
+                0x00800a2a                _edata = .
+                0x00800a2a                PROVIDE (__data_end, .)
+
+.bss            0x00800a2a      0x38d
+                0x00800a2a                PROVIDE (__bss_start, .)
+ *(.bss)
+ *(.bss*)
+ .bss.CUR_MODE  0x00800a2a        0x1 lambdaspeak.o
+ .bss.emulated_ssa1_dktronics_ms_counter
+                0x00800a2b        0x1 lambdaspeak.o
+ .bss.databus   0x00800a2c        0x1 lambdaspeak.o
+ .bss.LAST_MODE
+                0x00800a2d        0x1 lambdaspeak.o
+ .bss.length    0x00800a2e        0x1 lambdaspeak.o
+ .bss.buffer    0x00800a2f      0x100 lambdaspeak.o
+ .bss.STOP_NOW  0x00800b2f        0x1 lambdaspeak.o
+ .bss.emulated_ssa1_buffer_size
+                0x00800b30        0x1 lambdaspeak.o
+ .bss.NON_BLOCK_CONFIRMATIONS
+                0x00800b31        0x1 lambdaspeak.o
+ .bss.usart_ring_buffer
+                0x00800b32        0x1 lambdaspeak.o
+ .bss.usart_input_buffer_index
+                0x00800b33        0x2 lambdaspeak.o
+ .bss.from_cpc_input_buffer_index
+                0x00800b35        0x2 lambdaspeak.o
+ .bss.cpc_read_cursor
+                0x00800b37        0x2 lambdaspeak.o
+ .bss.send_msg  0x00800b39      0x10c lambdaspeak.o
+ .bss.databus1  0x00800c45        0x1 lambdaspeak.o
+ .bss.FAST_CPC_GETTERS
+                0x00800c46        0x2 lambdaspeak.o
+ .bss.SERIAL_RATE
+                0x00800c48        0x4 lambdaspeak.o
+ .bss.SERIAL_PARITY
+                0x00800c4c        0x1 lambdaspeak.o
+ .bss.databus2  0x00800c4d        0x1 lambdaspeak.o
+ .bss.hal_quote
+                0x00800c4e        0x1 lambdaspeak.o
+ .bss.LANGUAGE  0x00800c4f        0x1 lambdaspeak.o
+ .bss.rcvd_msg  0x00800c50       0x14 lambdaspeak.o
+ .bss.command_string
+                0x00800c64       0xbc lambdaspeak.o
+ .bss.rtc_seconds
+                0x00800d20        0x1 lambdaspeak.o
+ .bss.rtc_minutes
+                0x00800d21        0x1 lambdaspeak.o
+ .bss.rtc_hours
+                0x00800d22        0x1 lambdaspeak.o
+ .bss.rtc_month
+                0x00800d23        0x1 lambdaspeak.o
+ .bss.rtc_year  0x00800d24        0x1 lambdaspeak.o
+ .bss.rtc_date  0x00800d25        0x1 lambdaspeak.o
+ .bss.rtc_weekday
+                0x00800d26        0x1 lambdaspeak.o
+ .bss.rtc_msb_temp
+                0x00800d27        0x1 lambdaspeak.o
+ .bss.rtc_hours_dec
+                0x00800d28        0x1 lambdaspeak.o
+ .bss.rtc_mins_dec
+                0x00800d29        0x1 lambdaspeak.o
+ .bss.rtc_secs_dec
+                0x00800d2a        0x1 lambdaspeak.o
+ .bss.rtc_year_dec
+                0x00800d2b        0x1 lambdaspeak.o
+ .bss.rtc_month_dec
+                0x00800d2c        0x1 lambdaspeak.o
+ .bss.rtc_date_dec
+                0x00800d2d        0x1 lambdaspeak.o
+ .bss.rtc_weekday_dec
+                0x00800d2e        0x1 lambdaspeak.o
+ .bss.TTS_DATA_IDX
+                0x00800d2f        0x2 lambdaspeak.o
+ .bss.msg_index
+                0x00800d31        0x2 lambdaspeak.o
+ .bss.msg_len   0x00800d33        0x2 lambdaspeak.o
+ .bss.txt_len   0x00800d35        0x2 lambdaspeak.o
+ .bss.allo_map  0x00800d37       0x80 lambdaspeak.o
+ *(COMMON)
+                0x00800db7                PROVIDE (__bss_end, .)
+                0x0000eedc                __data_load_start = LOADADDR (.data)
+                0x0000f806                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800db7        0x0
+                0x00800db7                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800db7                PROVIDE (__noinit_end, .)
+                0x00800db7                _end = .
+                0x00800db7                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000      0x418
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000      0x418 lambdaspeak.o
+
+.debug_pubnames
+                0x00000000      0x9c7
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000      0x9c7 lambdaspeak.o
+
+.debug_info     0x00000000     0x3c50
+ *(.debug_info)
+ .debug_info    0x00000000     0x3c50 lambdaspeak.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0x320
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x320 lambdaspeak.o
+
+.debug_line     0x00000000     0x40e3
+ *(.debug_line)
+ .debug_line    0x00000000     0x40e3 lambdaspeak.o
+
+.debug_frame    0x00000000      0x810
+ *(.debug_frame)
+ .debug_frame   0x00000000      0x810 lambdaspeak.o
+
+.debug_str      0x00000000      0xdcd
+ *(.debug_str)
+ .debug_str     0x00000000      0xdcd lambdaspeak.o
+                                0xead (size before relaxing)
+
+.debug_loc      0x00000000     0x3179
+ *(.debug_loc)
+ .debug_loc     0x00000000     0x3179 lambdaspeak.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(atmega644-20pu.elf elf32-avr)
+LOAD linker stubs
+
+.debug_ranges   0x00000000      0x998
+ .debug_ranges  0x00000000      0x998 lambdaspeak.o
