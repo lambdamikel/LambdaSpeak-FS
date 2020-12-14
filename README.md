@@ -2,7 +2,7 @@
 
 Soon.
 
-![LS FS Front](images/ls-fs-1.jp) 
+![LS FS Front](images/ls-fs-1.jpg) 
 
-![LS FS Back](images/ls-fs-2.jp) 
+![LS FS Back](images/ls-fs-2.jpg) 
 
