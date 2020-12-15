@@ -274,9 +274,6 @@ static volatile unsigned short txt_len;
 #define LAMBDA_EPSON_ON 
 #define LAMBDA_DECTALK_ON
 
-#define EEPROM_PCM_UPLOAD_ON 
-#define EEPROM_PCM_PLAY_ON  
-
 #define SERIAL_ON  
 
 
