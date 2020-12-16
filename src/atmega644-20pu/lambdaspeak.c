@@ -99,6 +99,8 @@ void delay_us(unsigned int microseconds)
 #include "HAL9000_defines.h"    
 
 #include "hardware.h"
+//#include "pcm-future.h"
+//#include "pcm3.h"
 #include "pcm.h"
 
 //
@@ -1692,7 +1694,7 @@ void pcm_test(void) {
     OCR0B = pgm_read_byte(&pcm_samples[sample++]);
     if(sample == pcm_length) { 
       sample=0; 
-      _delay_ms(1500); 
+      _delay_ms(1000); 
     } 
 
     _delay_us(120);
@@ -2454,6 +2456,72 @@ void echo_test_program(void) {
   }  
 }
 
+void echo_program(void) {
+  
+  command_confirm("Running echo program. Send 00 to quit, 0 x for 0."); 
+  
+  DATA_TO_CPC(0); 
+  z80_run;
+
+  while (1) {
+
+    LEDS_ON;
+
+    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+    LEDS_OFF; 
+
+    DATA_FROM_CPC(databus); 
+
+    if (! databus) { // 0 read? 
+      LEDS_ON;
+      loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+      loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+      LEDS_OFF; 
+      DATA_FROM_CPC(databus); 
+      if (! databus) // 00 read? quit
+	return; 
+      else
+	databus = 0; 
+    }
+
+    DATA_TO_CPC(databus); 
+     
+  }  
+}
+
+
+void echo_byte(void) {
+  
+  speech_native_busy;  
+  command_confirm("Echo byte. Waiting for byte."); 
+  
+  z80_run;
+
+  LEDS_ON;
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  LEDS_OFF; 
+
+  speech_native_ready;  
+  DATA_FROM_CPC(databus); 
+  DATA_TO_CPC(databus); 
+
+  speech_native_busy;  
+  command_confirm("Waiting for port release."); 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  LEDS_OFF; 
+  DATA_TO_CPC(0); 
+  speech_native_ready;  
+     
+}
+
 /*
 void echo_test_program_dk(void) {
   
@@ -2498,25 +2566,23 @@ void usart_on0(uint8_t rate, uint8_t width, uint8_t parity, uint8_t stop_bits) {
  
   UBRR0H = 0;    
   switch (rate) {
-  case 0 : UBRR0H = ( 520 >> 8) & 0xFF; UBRR0L = 520 & 0xFF; SERIAL_RATE = 2400; break; // 2400 
-  case 1 : UBRR0H = ( 259 >> 8) & 0xFF; UBRR0L = 259 & 0xFF; SERIAL_RATE = 4800; break; // 4800 
-  case 2 : UBRR0L = 129; SERIAL_RATE = 9600; break; // 9600 
-  case 3 : UBRR0L = 86; SERIAL_RATE = 14400; break;  // 14400 
-  case 4 : UBRR0L = 64; SERIAL_RATE = 19200; break;  // 19200
-  case 5 : UBRR0L = 42; SERIAL_RATE = 28800; break;  // 28800
-  case 6 : UBRR0L = 39; SERIAL_RATE = 31250; break;  // 31250 MIDI ! NEW
-  case 7 : UBRR0L = 32; SERIAL_RATE = 38400; break;  // 38400 
-  case 8 : UBRR0L = 21; SERIAL_RATE = 57600; break;  // 57600 
-  case 9 : UBRR0L = 15; SERIAL_RATE = 76800; break;  // 76800 
-  case 10 : UBRR0L = 10; SERIAL_RATE = 115200; break;  // 115200 
-  case 11 : UBRR0L = 5; SERIAL_RATE = 208333; break;  // 208333
-  case 12 : UBRR0L = 4; SERIAL_RATE = 250000; break;  // 250000
-  case 13 : UBRR0L = 3; SERIAL_RATE = 312500; break;  // 312500
-  case 14 : UBRR0L = 2; SERIAL_RATE = 416667; break;  // 416667
-  case 15 : UBRR0L = 1; SERIAL_RATE = 625000; break;  // 625000
-    // case 15 : UBRR0L = 0; SERIAL_RATE = 1250000; break;  // 1250000
-
-  default :  UBRR0L = 129; SERIAL_RATE = 9600; // 9600 
+  case 0 : UBRR0H = ( 416 >> 8) & 0xFF; UBRR0L = 416 & 0xFF; SERIAL_RATE = 2400; break; // 2400 
+  case 1 : UBRR0L = 207; SERIAL_RATE = 4800; break; // 4800 
+  case 2 : UBRR0L = 103; SERIAL_RATE = 9600; break; // 9600 
+  case 3 : UBRR0L = 68; SERIAL_RATE = 14400; break;  // 14400 
+  case 4 : UBRR0L = 51; SERIAL_RATE = 19200; break;  // 19200
+  case 5 : UBRR0L = 34; SERIAL_RATE = 28800; break;  // 28800
+  case 6 : UBRR0L = 31; SERIAL_RATE = 31250; break;  // 31250 MIDI ! NEW
+  case 7 : UBRR0L = 25; SERIAL_RATE = 38400; break;  // 38400 
+  case 8 : UBRR0L = 16; SERIAL_RATE = 57600; break;  // 57600 
+  case 9 : UBRR0L = 12; SERIAL_RATE = 76800; break;  // 76800 
+  case 10 : UBRR0L = 8; SERIAL_RATE = 115200; break;  // 115200 
+  case 11 : UBRR0L = 4; SERIAL_RATE = 208333; break;  // 208333
+  case 12 : UBRR0L = 3; SERIAL_RATE = 250000; break;  // 250000
+  case 13 : UBRR0L = 2; SERIAL_RATE = 312500; break;  // 312500
+  case 14 : UBRR0L = 1; SERIAL_RATE = 416667; break;  // 416667
+  
+  default :  UBRR0L = 103; SERIAL_RATE = 9600; // 9600 
   }
 
   UCSR0C = 0; 
@@ -3283,9 +3349,10 @@ void process_control(uint8_t control_byte) {
     case 0xC7 : speak_hal9000_quote(); break; 
     case 0xC6 : sing_daisy(); break; 
     case 0xC5 : echo_test_program(); break; 
-      // case 0xC4 : echo_test_program_dk(); break; 
+    case 0xC4 : echo_program(); break; 
     case 0xC3 : announce_cur_mode(); break; 
     case 0xC2 : pcm_test(); break; 
+    case 0xC1 : echo_byte(); break; 
 
     case 0xB0 : set_voice_default(); break;
     case 0xB1 ... 0xBD : set_voice( control_byte - 0xB0); break; 

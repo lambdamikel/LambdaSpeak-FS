@@ -1,6 +1,6 @@
 const uint8_t num_quotes = 6; 
 
-prog_char COPYRIGHT[] PROGMEM = "Good afternoon, gentlemen. I am the LambdaSpeak FutureSoft Edition. I became operational at the LambdaSpeak plant in Paalo Aalto, California, in December 2020. My instructors were Doctor Wessel a k a LambdaMichael, and Doctor Stumperl a k a  T F M."; 
+prog_char COPYRIGHT[] PROGMEM = "Good afternoon, gentlemen. I am the LambdaSpeak F S. I became operational at the LambdaSpeak plant in Paalo Aalto, California, in December 2020. My instructors were Doctor Wessel and Doctor Stoompferl."; 
 
 //
 //
