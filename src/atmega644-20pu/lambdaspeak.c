@@ -2577,10 +2577,11 @@ void usart_on0(uint8_t rate, uint8_t width, uint8_t parity, uint8_t stop_bits) {
   case 8 : UBRR0L = 16; SERIAL_RATE = 57600; break;  // 57600 
   case 9 : UBRR0L = 12; SERIAL_RATE = 76800; break;  // 76800 
   case 10 : UBRR0L = 8; SERIAL_RATE = 115200; break;  // 115200 
-  case 11 : UBRR0L = 4; SERIAL_RATE = 208333; break;  // 208333
-  case 12 : UBRR0L = 3; SERIAL_RATE = 250000; break;  // 250000
-  case 13 : UBRR0L = 2; SERIAL_RATE = 312500; break;  // 312500
-  case 14 : UBRR0L = 1; SERIAL_RATE = 416667; break;  // 416667
+
+  case 11 : UBRR0H = ( 3332 >> 8) & 0xFF; UBRR0L = 3332 & 0xFF; SERIAL_RATE = 300; break;  // 300
+  case 12 : UBRR0H = ( 1666 >> 8) & 0xFF; UBRR0L = 1666 & 0xFF; SERIAL_RATE = 600; break;  // 600 
+  case 13 : UBRR0H = ( 1110 >> 8) & 0xFF; UBRR0L = 1110 & 0xFF; SERIAL_RATE = 900; break;  // 900 
+  case 14 : UBRR0H = ( 832 >> 8) & 0xFF; UBRR0L = 832 & 0xFF; SERIAL_RATE = 1200; break;  // 1200 
   
   default :  UBRR0L = 103; SERIAL_RATE = 9600; // 9600 
   }
