@@ -301,8 +301,11 @@ static volatile int FAST_CPC_GETTERS = 0;  // for CPC_READ_DELAY : 0 = BASIC / S
 
 typedef enum { SSA1_M = 0, LAMBDA_EPSON_M = 1, LAMBDA_DECTALK_M = 2, DKTRONICS_M = 3, AMDRUM_M = 4, SERIAL_M = 9, START_OVER_SAME_MODE = 10 } LS_MODE; 
 
-static volatile LS_MODE CUR_MODE = SSA1_M; 
-static volatile LS_MODE LAST_MODE = SSA1_M;  
+// static volatile LS_MODE CUR_MODE = SSA1_M; 
+// static volatile LS_MODE LAST_MODE = SSA1_M;  
+
+static volatile LS_MODE CUR_MODE = LAMBDA_EPSON_M; 
+static volatile LS_MODE LAST_MODE = LAMBDA_EPSON_M; 
 
 // 
 //

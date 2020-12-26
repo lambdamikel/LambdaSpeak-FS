@@ -703,55 +703,56 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini0)
                 0x0000efe8                _etext = .
 
-.data           0x00800100      0x994 load address 0x0000efe8
+.data           0x00800100      0x996 load address 0x0000efe8
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100      0x970 lambdaspeak.o
  *(.data*)
- .data.BLOCKING
+ .data.CUR_MODE
                 0x00800a70        0x1 lambdaspeak.o
- .data.SERIAL_WIDTH
+ .data.LAST_MODE
                 0x00800a71        0x1 lambdaspeak.o
- .data.SERIAL_STOP_BITS
+ .data.BLOCKING
                 0x00800a72        0x1 lambdaspeak.o
- .data.SERIAL_BAUDRATE
+ .data.SERIAL_WIDTH
                 0x00800a73        0x1 lambdaspeak.o
- .data.VOICE    0x00800a74        0x1 lambdaspeak.o
- .data.SPEAK_RATE
+ .data.SERIAL_STOP_BITS
+                0x00800a74        0x1 lambdaspeak.o
+ .data.SERIAL_BAUDRATE
                 0x00800a75        0x1 lambdaspeak.o
- .data.VOLUME   0x00800a76        0x1 lambdaspeak.o
- .data.FLUSH_BUFFER_DELAY
+ .data.VOICE    0x00800a76        0x1 lambdaspeak.o
+ .data.SPEAK_RATE
                 0x00800a77        0x1 lambdaspeak.o
- .data.CONFIRM_COMMANDS
-                0x00800a78        0x1 lambdaspeak.o
- .data.ssa1_and_dk_flush_buffer_after_ms
+ .data.VOLUME   0x00800a78        0x1 lambdaspeak.o
+ .data.FLUSH_BUFFER_DELAY
                 0x00800a79        0x1 lambdaspeak.o
- .data.ssa_dktronics_loadme_again_after_ms
+ .data.CONFIRM_COMMANDS
                 0x00800a7a        0x1 lambdaspeak.o
+ .data.ssa1_and_dk_flush_buffer_after_ms
+                0x00800a7b        0x1 lambdaspeak.o
+ .data.ssa_dktronics_loadme_again_after_ms
+                0x00800a7c        0x1 lambdaspeak.o
  *(.rodata)
  *(.rodata*)
  .rodata.C.72.2436
-                0x00800a7b        0x6 lambdaspeak.o
+                0x00800a7d        0x6 lambdaspeak.o
  .rodata.C.71.2429
-                0x00800a81        0x6 lambdaspeak.o
+                0x00800a83        0x6 lambdaspeak.o
  .rodata.C.12.2171
-                0x00800a87        0xc lambdaspeak.o
+                0x00800a89        0xc lambdaspeak.o
  *(.gnu.linkonce.d*)
-                0x00800a94                . = ALIGN (0x2)
- *fill*         0x00800a93        0x1 00
-                0x00800a94                _edata = .
-                0x00800a94                PROVIDE (__data_end, .)
+                0x00800a96                . = ALIGN (0x2)
+ *fill*         0x00800a95        0x1 00
+                0x00800a96                _edata = .
+                0x00800a96                PROVIDE (__data_end, .)
 
-.bss            0x00800a94      0x38d
-                0x00800a94                PROVIDE (__bss_start, .)
+.bss            0x00800a96      0x38b
+                0x00800a96                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.CUR_MODE  0x00800a94        0x1 lambdaspeak.o
  .bss.emulated_ssa1_dktronics_ms_counter
-                0x00800a95        0x1 lambdaspeak.o
- .bss.databus   0x00800a96        0x1 lambdaspeak.o
- .bss.LAST_MODE
-                0x00800a97        0x1 lambdaspeak.o
+                0x00800a96        0x1 lambdaspeak.o
+ .bss.databus   0x00800a97        0x1 lambdaspeak.o
  .bss.length    0x00800a98        0x1 lambdaspeak.o
  .bss.buffer    0x00800a99      0x100 lambdaspeak.o
  .bss.STOP_NOW  0x00800b99        0x1 lambdaspeak.o
@@ -820,7 +821,7 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(COMMON)
                 0x00800e21                PROVIDE (__bss_end, .)
                 0x0000efe8                __data_load_start = LOADADDR (.data)
-                0x0000f97c                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000f97e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800e21        0x0
                 0x00800e21                PROVIDE (__noinit_start, .)
