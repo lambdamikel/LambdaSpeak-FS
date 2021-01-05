@@ -18,7 +18,7 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
    LambdaSpeak FS Edition
-   Copyright (C) 2017 - 2020 Michael Wessel
+   Copyright (C) 2017 - 2021 Michael Wessel
    LambdaSpeak comes with ABSOLUTELY NO WARRANTY. 
    This is free software, and you are welcome to redistribute it
    under certain conditions. 
@@ -27,10 +27,10 @@
 
 //
 // LambdaSpeak FS
-// Version 1 
+// Version 2 
 // License: GPL 3 
 // 
-// (C) 2019 Michael Wessel 
+// (C) 2021 Michael Wessel 
 // mailto:miacwess@gmail.com
 // https://www.michael-wessel.info
 // 
@@ -2495,11 +2495,36 @@ void echo_program(void) {
 }
 
 
+
+void wait_and_echo_single_byte(void) {
+
+  DATA_TO_CPC(0); 
+
+  z80_run;
+  LEDS_ON;
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  speech_native_ready;  
+  DATA_FROM_CPC(databus); 
+  DATA_TO_CPC(databus); 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  LEDS_OFF; 
+  DATA_TO_CPC(0); 
+  speech_native_ready;  
+
+}
+
+
 void echo_byte(void) {
   
   speech_native_busy;  
   command_confirm("Echo byte. Waiting for byte."); 
-  
+
   z80_run;
 
   LEDS_ON;
@@ -2513,7 +2538,8 @@ void echo_byte(void) {
   DATA_FROM_CPC(databus); 
   DATA_TO_CPC(databus); 
 
-  speech_native_busy;  
+  // don't do that, voids the echo byte on the databus! 
+  // speech_native_busy;  
   command_confirm("Waiting for port release."); 
 
   loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
@@ -3384,7 +3410,6 @@ void process_control(uint8_t control_byte) {
 //
 //
 
-
 int main(void) {
 
   // uint8_t diag = MCUSR;
@@ -3523,11 +3548,8 @@ int main(void) {
 
 	  if (databus == 0xF0) { 
 	    // do nothing for next byte! just for databus LED display 
-	    
-	    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE_DK); 
-	    _delay_us(3); // don't change... it works	    
-	    DATA_FROM_CPC(databus); 	  
-	    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE_DK); 
+
+	    wait_and_echo_single_byte(); 	    
 
 	  } else {
 
@@ -3609,11 +3631,8 @@ int main(void) {
 
 	  if (databus == 0xF0) { 
 	    // do nothing for next byte! just for databus LED display 
-	    
-	    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE_DK); 
-	    _delay_us(3); // don't change... it works	    
-	    DATA_FROM_CPC(databus); 	  
-	    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE_DK); 
+
+	    wait_and_echo_single_byte(); 	    
 
 	  } else {
 	    
@@ -3689,7 +3708,6 @@ int main(void) {
 
 	loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
 
-	z80_halt;
 	speech_native_busy;  // to 0... 
 
 	TRANSMIT_ON;
@@ -3699,13 +3717,12 @@ int main(void) {
 	  
 	  if (databus == 0xF0) { 
 	    // do nothing for next byte! just for databus LED display 
-	    
-	    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE_DK); 
-	    _delay_us(3); // don't change... it works	    
-	    DATA_FROM_CPC(databus); 	  
-	    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE_DK); 
+
+	    wait_and_echo_single_byte(); 
 
 	  } else {
+
+	    z80_halt;
 
 	    process_control(databus); 
 
