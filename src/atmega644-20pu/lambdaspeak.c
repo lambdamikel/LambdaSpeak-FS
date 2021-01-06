@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 2 
+// Version 4
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 1
+#define VERSION 4
 
 #include "HAL9000_defines.h"    
 
@@ -1689,14 +1689,39 @@ void pcm_test(void) {
   z80_run; 
 
   uint32_t sample = 0; 
+  uint8_t byte = 0; 
 
   setup_pcm(); 
 
   while (1) {
 
-    OCR0B = pgm_read_byte(&pcm_samples[sample++]);
+    byte = pgm_read_byte(&pcm_samples[sample++]);
+    OCR0B = byte; 
+
+    byte = abs(byte - 127);
+
+    if (byte < 8) {
+      DATA_TO_CPC( 0); 
+    } else if (byte < 16) {
+      DATA_TO_CPC( 1); 
+    } else if (byte < 32) {
+      DATA_TO_CPC( 3); 
+    } else if (byte < 40) {
+      DATA_TO_CPC( 7); 
+    } else if (byte < 48) {
+      DATA_TO_CPC( 15); 
+    } else if (byte < 64) {
+      DATA_TO_CPC( 31); 
+    } else if (byte < 80) {
+      DATA_TO_CPC( 63); 
+    } else if (byte < 104) {
+      DATA_TO_CPC( 127); 
+    } else 
+      DATA_TO_CPC( 255); 
+    
     if(sample == pcm_length) { 
       sample=0; 
+      DATA_TO_CPC( 0); 
       _delay_ms(1000); 
     } 
 
@@ -1721,13 +1746,35 @@ void amdrum_mode(void) {
   cli();
   
   uint8_t last_databus = 0; 
+  uint8_t byte = 0; 
   
   while(1) {
     loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
     DATA_FROM_CPC(databus); 
     if ( last_databus != databus) {
+
       OCR0B = databus; 
       last_databus = databus; 
+      byte = abs(databus - 127);
+
+      if (byte < 8) {
+	DATA_TO_CPC( 0); 
+      } else if (byte < 16) {
+	DATA_TO_CPC( 1); 
+      } else if (byte < 32) {
+	DATA_TO_CPC( 3); 
+      } else if (byte < 40) {
+	DATA_TO_CPC( 7); 
+      } else if (byte < 48) {
+	DATA_TO_CPC( 15); 
+      } else if (byte < 64) {
+	DATA_TO_CPC( 31); 
+      } else if (byte < 80) {
+	DATA_TO_CPC( 63); 
+      } else if (byte < 104) {
+	DATA_TO_CPC( 127); 
+      } else 
+	DATA_TO_CPC( 255); 
     }
   }   
 }
