@@ -1,7 +1,7 @@
 /* 
    LambdaSpeak - A Next-Generation Speech Synthesizer for the CPC 
    Firmware for LambdaSpeak FS Edition
-   Copyright (C) 2017 - 2020 Michael Wessel 
+   Copyright (C) 2017 - 2021 Michael Wessel 
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 4
+// Version 5
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 4
+#define VERSION 5
 
 #include "HAL9000_defines.h"    
 
@@ -1747,10 +1747,12 @@ void amdrum_mode(void) {
   
   uint8_t last_databus = 0; 
   uint8_t byte = 0; 
+  uint8_t exit_counter = 0; 
   
   while(1) {
     loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
     DATA_FROM_CPC(databus); 
+
     if ( last_databus != databus) {
 
       OCR0B = databus; 
@@ -1758,29 +1760,57 @@ void amdrum_mode(void) {
       byte = abs(databus - 127);
 
       if (byte < 8) {
-	DATA_TO_CPC( 0); 
+
+	// exit after 4 6 4 6 1 2 8 
+	//            0 1 2 3 4 5 6 
+
+	if ( (databus == 128 && ( exit_counter == 4)) || 
+	     (databus == 129 && ( exit_counter == 5)) || 
+	     (databus == 131 && ( exit_counter == 0 || exit_counter == 2)) ||
+	     (databus == 133 && ( exit_counter == 1 || exit_counter == 3))) 
+	  exit_counter++; 	
+	else 
+	  exit_counter = 0; 
+
+	DATA_TO_CPC( 0);       
+    
       } else if (byte < 16) {
+	
+	if (databus == 135 && ( exit_counter == 6)) {
+	  	  
+	  process_reset(); 
+	  	  
+	}
+
 	DATA_TO_CPC( 1); 
-      } else if (byte < 32) {
-	DATA_TO_CPC( 3); 
-      } else if (byte < 40) {
-	DATA_TO_CPC( 7); 
-      } else if (byte < 48) {
-	DATA_TO_CPC( 15); 
-      } else if (byte < 64) {
-	DATA_TO_CPC( 31); 
-      } else if (byte < 80) {
-	DATA_TO_CPC( 63); 
-      } else if (byte < 104) {
-	DATA_TO_CPC( 127); 
-      } else 
-	DATA_TO_CPC( 255); 
+
+	exit_counter = 0;     
+
+      } else { 
+
+	exit_counter = 0;     
+
+	if (byte < 32) {
+	  DATA_TO_CPC( 3); 
+	} else if (byte < 40) {
+	  DATA_TO_CPC( 7); 
+	} else if (byte < 48) {
+	  DATA_TO_CPC( 15); 
+	} else if (byte < 64) {
+	  DATA_TO_CPC( 31); 
+	} else if (byte < 80) {
+	  DATA_TO_CPC( 63); 
+	} else if (byte < 104) {
+	  DATA_TO_CPC( 127); 
+	} else 
+	  DATA_TO_CPC( 255); 
+      }
     }
-  }   
+  }
 }
 
 //
-// RTC
+// RTC 
 // 
 
 void twi_init(void) {
