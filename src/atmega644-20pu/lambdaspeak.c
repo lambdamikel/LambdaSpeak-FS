@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 5
+// Version 6
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 5
+#define VERSION 6
 
 #include "HAL9000_defines.h"    
 
@@ -306,6 +306,10 @@ typedef enum { SSA1_M = 0, LAMBDA_EPSON_M = 1, LAMBDA_DECTALK_M = 2, DKTRONICS_M
 
 static volatile LS_MODE CUR_MODE = LAMBDA_EPSON_M; 
 static volatile LS_MODE LAST_MODE = LAMBDA_EPSON_M; 
+
+typedef enum { AMDRUM_STD = 0, AMDRUM_CUSTOM = 1, AMDRUM_HQ = 2} PCM_MODE; 
+
+static volatile PCM_MODE CUR_AMDRUM_MODE = AMDRUM_STD; 
 
 // 
 //
@@ -1731,12 +1735,13 @@ void pcm_test(void) {
  
 }
 
-void amdrum_mode(void) {
+
+void amdrum_mode_hq(void) {
 
   LEDS_ON;
 
   CUR_MODE = AMDRUM_M; 
-  command_confirm("Amdrum mode. Power cycle C P C to quit.");  
+  command_confirm("H q amdrum mode. Power cycle to quit.");  
 
   z80_run; 
   
@@ -1745,6 +1750,38 @@ void amdrum_mode(void) {
   setup_pcm();   
   cli();
   
+  uint8_t last_databus = 0; 
+  
+  while(1) {
+
+    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+    DATA_FROM_CPC(databus); 
+
+    if ( last_databus != databus) {
+      last_databus = databus; 
+      databus = databus > 250 ? 250 : databus; 
+      databus = databus < 5 ? 5 : databus; 
+      OCR0B = databus;   
+    }
+  }
+ 
+} 
+
+void amdrum_mode(void) {
+
+  LEDS_ON;
+
+  CUR_MODE = AMDRUM_M; 
+  command_confirm("Standard amdrum mode. Send 4 6 4 6 1 2 8 to quit.");  
+
+  z80_run; 
+  
+  AMDRUM_ON; 
+
+  setup_pcm();   
+  cli();
+  
+  uint8_t clipped_databus = 0; 
   uint8_t last_databus = 0; 
   uint8_t byte = 0; 
   uint8_t exit_counter = 0; 
@@ -1755,8 +1792,12 @@ void amdrum_mode(void) {
 
     if ( last_databus != databus) {
 
-      OCR0B = databus; 
       last_databus = databus; 
+
+      clipped_databus = databus > 250 ? 250 : databus; 
+      clipped_databus = clipped_databus < 5 ? 5 : clipped_databus; 
+      OCR0B = clipped_databus; 
+
       byte = abs(databus - 127);
 
       if (byte < 8) {
@@ -1807,7 +1848,186 @@ void amdrum_mode(void) {
       }
     }
   }
-}
+ 
+} 
+
+void amdrum_mode_custom(void) {
+
+  LEDS_ON;
+
+  CUR_MODE = AMDRUM_M; 
+  command_confirm("Custom amdrum mode. Enable lightshow?");  
+
+  z80_run; 
+
+  //
+  //  Lightshow on / off? 
+  //
+
+  LEDS_ON;
+  speech_native_ready; 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  _delay_us(3);
+  DATA_FROM_CPC(databus); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  uint8_t lightshow = databus; 
+
+  speech_native_busy; 
+  LEDS_OFF;
+
+  //
+  //  Exit command enabled 
+  //
+
+  command_confirm("Enable exit check?");  
+
+  LEDS_ON;
+  speech_native_ready; 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  _delay_us(3);
+  DATA_FROM_CPC(databus); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  uint8_t exitcheck = databus; 
+
+  speech_native_busy; 
+  LEDS_OFF;
+
+  //
+  //  Clip range
+  //
+
+  command_confirm("Send clip range.");  
+
+  LEDS_ON;
+  speech_native_ready; 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  _delay_us(3);
+  DATA_FROM_CPC(databus); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  uint8_t cliprange = databus;  
+
+  speech_native_busy; 
+  LEDS_OFF;
+
+
+  //
+  // Dynamic Smoothing
+  // 
+
+  command_confirm("Send smoothing delta.");  
+
+  LEDS_ON;
+  speech_native_ready; 
+
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  _delay_us(3);
+  DATA_FROM_CPC(databus); 
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+
+  uint8_t smoothing = databus;  
+
+  speech_native_busy; 
+  LEDS_OFF;
+
+
+  //
+  //
+  //
+  
+  AMDRUM_ON; 
+
+  setup_pcm();   
+  cli();
+  
+  uint8_t last_databus = 0; 
+  uint8_t clipped_databus = 0; 
+  uint8_t byte = 0; 
+  uint8_t exit_counter = 0; 
+
+  uint8_t clip_max = 255 - cliprange; 
+  uint8_t clip_min = cliprange; 
+  
+  while(1) {
+
+    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+    DATA_FROM_CPC(databus); 
+
+    if ( abs(last_databus - databus) > smoothing ) {
+
+      last_databus = databus; 
+
+      clipped_databus = databus > clip_max ? clip_max : databus; 
+      clipped_databus = clipped_databus < clip_min ? clip_min : clipped_databus; 
+      OCR0B = clipped_databus; 
+
+      if (exitcheck || lightshow) {
+
+	byte = abs(databus - 127);
+
+	if (byte < 8) {
+
+	  // exit after 4 6 4 6 1 2 8 
+	  //            0 1 2 3 4 5 6 
+
+	  if (exitcheck) {
+	    if ( (databus == 128 && ( exit_counter == 4)) || 
+		 (databus == 129 && ( exit_counter == 5)) || 
+		 (databus == 131 && ( exit_counter == 0 || exit_counter == 2)) ||
+		 (databus == 133 && ( exit_counter == 1 || exit_counter == 3))) 
+	      exit_counter++; 	
+	    else 
+	      exit_counter = 0; 
+	  }
+
+	  if (lightshow) 
+	    DATA_TO_CPC( 0);       
+    
+	} else if (byte < 16) {
+	
+	  if (exitcheck && ( databus == 135 ) && ( exit_counter == 6)) {
+	  	  
+	    process_reset(); 
+	  	  
+	  }
+
+	  if (lightshow) 
+	    DATA_TO_CPC( 1); 
+
+	  exit_counter = 0;     
+
+	} else { 
+
+	  if (exitcheck) 
+	    exit_counter = 0;     
+
+	  if (lightshow)  {
+	    if (byte < 32) {
+	      DATA_TO_CPC( 3); 
+	    } else if (byte < 40) {
+	      DATA_TO_CPC( 7); 
+	    } else if (byte < 48) {
+	      DATA_TO_CPC( 15); 
+	    } else if (byte < 64) {
+	      DATA_TO_CPC( 31); 
+	    } else if (byte < 80) {
+	      DATA_TO_CPC( 63); 
+	    } else if (byte < 104) {
+	      DATA_TO_CPC( 127); 
+	    } else 
+	      DATA_TO_CPC( 255); 
+	  }
+	}
+      }
+    }
+  }
+ 
+} 
 
 //
 // RTC 
@@ -2349,6 +2569,31 @@ void slow_getters(void) {
 //
 //
 // 
+
+void use_std_amdrum(void) {
+
+  CUR_AMDRUM_MODE = AMDRUM_STD; ; 
+  command_confirm("Use standard amdrum mode."); 
+
+}
+
+void use_hq_amdrum(void) {
+
+  CUR_AMDRUM_MODE = AMDRUM_HQ; ; 
+  command_confirm("Use h q Amdrum mode."); 
+
+}
+
+void use_custom_amdrum(void) {
+
+  CUR_AMDRUM_MODE = AMDRUM_CUSTOM; ; 
+  command_confirm("Use custom amdrum mode."); 
+
+}
+
+//
+//
+//
 
 
 void cpc_input(char* message, uint8_t nibble, uint8_t four_bit) {
@@ -3413,6 +3658,11 @@ void process_control(uint8_t control_byte) {
  
     case 0xFF : process_reset(); break; 
 
+    // DIFFERENT FROM LS3 - AMDRUM MODE SETTINGS
+    case 0xFE : use_std_amdrum(); break; 
+    case 0xFD : use_custom_amdrum(); break; 
+    case 0xFC : use_hq_amdrum(); break;      
+
     case 0xF4 : non_blocking_confirmations(); break; 
     case 0xF3 : blocking_confirmations(); break;  
     case 0xF2 : get_full_mode(); break; 
@@ -3429,8 +3679,13 @@ void process_control(uint8_t control_byte) {
     case 0xE7 : english(); break; 
     case 0xE6 : spanish(); break; 
     case 0xE5 : fast_getters(); break; 
-    case 0xE4 : slow_getters(); break; 
-    case 0xE3 : amdrum_mode(); break; 
+    case 0xE4 : slow_getters(); break;
+ 
+    case 0xE3 : if (CUR_AMDRUM_MODE == AMDRUM_CUSTOM) 
+                   amdrum_mode_custom(); 
+                else if (CUR_AMDRUM_MODE == AMDRUM_HQ) 
+                   amdrum_mode_hq(); 
+                else amdrum_mode(); break; 
     case 0xE0 : medium_getters(); break; 
 
     case 0xDF : break;   // stop_command(); 
