@@ -24,7 +24,7 @@ The first batch of 10 was produced and distributed by TFM!
 ## About
 
 Check out [LambdaSpeak
-3.](https://github.com/lambdamikel/LambdaSpeak3) for
+3](https://github.com/lambdamikel/LambdaSpeak3) for
 details. LambdaSpeak FS does not have the SP0256-AL2, and the
 EEPROM-based (autonomous PCM sample-playing) functions are not
 available either.
