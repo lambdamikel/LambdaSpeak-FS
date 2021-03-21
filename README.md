@@ -14,11 +14,11 @@ The first batch of 10 was produced and distributed by TFM!
 
 ## Demos 
 
-(YouTube Video 1)[https://youtu.be/KedbNqoHSpE]
+[YouTube Video 1](https://youtu.be/KedbNqoHSpE)
 
-(YouTube Video 2)[https://youtu.be/ffm2ckMMNg4]
+[YouTube Video 2](https://youtu.be/ffm2ckMMNg4)
 
-(YouTube Video 3)[https://youtu.be/5-QFHwXAVIw] 
+[YouTube Video 3](https://youtu.be/5-QFHwXAVIw)
 
 
 ## About
