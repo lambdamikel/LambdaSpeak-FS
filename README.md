@@ -38,8 +38,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 - R7: 2k (must match D1 LED!) 
 - R1, R3, R4: 10k 
 - R5: Jumper Wire 
-
-- Rn: 9pin Resistor Array / Network, A102J (bussed 8 x 1k, Common GND = Pin 9); this must match the LED segment bar display 
+- Rn: 9pin Resistor Array / Network, A102J
 
 ### Potentiometers / Trimmers: 
 
@@ -67,7 +66,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 - Q1: 16 MHz Crystal 
 - SW3: 8 Position DIP Switch 
 - D1: Activity LED 
-- J8: 8 Segment LED Bar Display 
+- J8: [8 Segment LED Bar Display](https://www.amazon.com/Display-Segment-Graphics-Bar-Graph-8segmentos/dp/B07SMX1ZXX/)
 - J2, J3: Stackable Female 8-Pin Arduino Headers (connector for mikroBUS [TextToSpeech board](https://www.mikroe.com/text-to-speech-click))
 - J7: Breakable Single Row Arduino Pin Headers 
 - J4, J5: [Mini Stereo Audio Sockets](https://www.amazon.com/uxcell-Plastic-Stereo-Socket-Connector/dp/B00GLQAF7A/) 
