@@ -59,7 +59,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 - U2: 74LS374 
 - U3: 74LS244 
 - U4: ATmega 644-20PU
-- Optional: ICs DIL sockets (I recommend to use a socket at least for U4, to allow reprogramming) 
+- Optional: DIL sockets for ICs (I recommend to use a socket at least for U4, to allow reprogramming) 
 
 ### Misc 
 
