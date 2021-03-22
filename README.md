@@ -63,6 +63,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 
 ### Misc 
 
+- CPC Connector: [2.54mm 2X25 50 Pin Right Angle Male Shrouded PCB Box Header IDC Connector](https://www.amazon.com/Madahu-Connectors-2-54mm-Shrouded-Connector/dp/B07XRH56QY) 
 - Q1: 16 MHz Crystal 
 - SW3: 8 Position DIP Switch 
 - D1: Activity LED 
@@ -87,4 +88,6 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 Don't forget the decoupling capacitors (104's) under the ICs! If you
 are going to socket the ICs, then you will need to cut out the middle
 struts from the DIL sockets to accomodate them.
+
+
 
