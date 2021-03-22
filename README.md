@@ -48,7 +48,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 ### Capacitors
 
 - C1, C2: 22 pF (Code 220); ***note: these must match Q1!*** 
-- C3: 68nF (Code 683) 
+- C3: 68 nF (Code 683) 
 - C5, C6, C7, C8: 100 nF (Code 104) 
 - C9, C10: Jumper Wire 
 
