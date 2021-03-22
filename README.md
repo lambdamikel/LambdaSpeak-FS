@@ -79,7 +79,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 - RTC / I2C: [RTC IIC Module](https://www.amazon.com/Diymore-AT24C32-Arduino-Without-Battery/dp/B01IXXACD0)
 - CR2032 3V Battery for RTC Module
 - Mini SDCard for MP3 Module
-- [Mini Stereo Audio Patch Cable](https://www.amazon.com/Tripp-Lite-P312-001-2RA-3-5mm-Stereo) 
+- [Mini Stereo Audio Patch Cable](https://www.amazon.com/Tripp-Lite-P312-001-2RA-3-5mm-Stereo/dp/B00M5FKEUE/)
 
 
 ## Assembly Tipps 
