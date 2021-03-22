@@ -84,9 +84,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 
 ## Assembly Tipps 
 
-Don't forget the decoupling capacitors (104's) under the ICs! If you
-are going to socket the ICs, then you will need to cut out the middle
+- Don't forget the decoupling capacitors (104's) under the ICs! 
+- If you are going to socket the ICs, then you will need to cut out the middle
 struts from the DIL sockets to accomodate them.
-
-
-
+- Use a fine side cutter to cut off the `SQW` and `32K` pins from the RTC module 
