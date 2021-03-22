@@ -35,7 +35,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 
 ### Resistors 
 
-- R7: 2k (must match D1 LED!) 
+- R7: 2k; ***note: must match D1 LED!*** 
 - R1, R3, R4: 10k 
 - R5: Jumper Wire 
 - Rn: 9pin Resistor Array / Network, A102J
@@ -47,7 +47,7 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 
 ### Capacitors
 
-- C1, C2: 22 pF (Code 220)
+- C1, C2: 22 pF (Code 220); ***note: these must match Q1!*** 
 - C3: 68nF (Code 683) 
 - C5, C6, C7, C8: 100 nF (Code 104) 
 - C9, C10: Jumper Wire 
@@ -63,8 +63,8 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 ### Misc 
 
 - CPC Connector: [2.54mm 2X25 50 Pin Right Angle Male Shrouded PCB Box Header IDC Connector](https://www.amazon.com/Madahu-Connectors-2-54mm-Shrouded-Connector/dp/B07XRH56QY) 
-- Q1: 16 MHz Crystal 
-- SW3: 8 Position DIP Switch 
+- Q1: [16 MHz Crystal](https://www.amazon.com/Uxcell-a14050500ux0216-HC-49S-Crystal-Oscillator/) 
+- SW3: [8 Position DIP Switch](https://www.amazon.com/Yohii-2-54mm-Positions-Double-Assorted)
 - D1: Activity LED 
 - J8: [8 Segment LED Bar Display](https://www.amazon.com/Display-Segment-Graphics-Bar-Graph-8segmentos/dp/B07SMX1ZXX/)
 - J2, J3: Stackable Female 8-Pin Arduino Headers (connector for mikroBUS [TextToSpeech board](https://www.mikroe.com/text-to-speech-click))
