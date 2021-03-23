@@ -27,7 +27,14 @@ Check out [LambdaSpeak
 3](https://github.com/lambdamikel/LambdaSpeak3) for
 details. LambdaSpeak FS does not have the SP0256-AL2, and the
 EEPROM-based (autonomous PCM sample-playing) functions are not
-available either.
+available either. 
+
+But it got an serial high speed connecter for additional usage.
+Moreover, it features a new `echo-byte` mode, code `&C4` to enable, in
+which the CPC can take control over the LED Bar Segment Display. This
+is basically a full 8bit digital output. One can simply remove the
+Segment Bar LED Display and use the socket for 8bit digital output,
+e.g., by sticking DuPont wires into the DIL socket.
 
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
