@@ -23,6 +23,8 @@ The first batch of 10 was produced and distributed by TFM!
 
 ## About
 
+"LambdaSpeak FutureSoft" aka "LambdaSpeak FS" aka "LS-FS" aka "LSFS". 
+
 Check out [LambdaSpeak
 3](https://github.com/lambdamikel/LambdaSpeak3) for
 details. LambdaSpeak FS does not have the SP0256-AL2, and the
@@ -36,6 +38,44 @@ over the LED Bar Segment Display. This is basically a full 8bit
 digital output. One can simply remove the Segment Bar LED Display and
 use the socket for 8bit digital output, e.g., by sticking DuPont wires
 into the DIL socket.
+
+Another difference is optimized audio performance. Due to the absence
+of the SP0256-AL2, we adopted a much simpler audio routing path,
+omitting the audio op-amp for mixing, and optimized the filter
+performance for a crystal clear and sharp sound. In comparison,
+LambdaSpeak 3 sounds "warmer" and less clear / digital. Somewhat
+similar to an Amiga 500 with filter on / off (LSFS is filter off).
+For PCM sound, this give the optimal performance in our opinion. 
+
+As with the LambdaSpeak 3, the Amdrum / PCM sample playing mode is
+entered by sending control byte `&E3`. A new feature is that you can
+exit / leave that mode by sending the "exit sequence": "4 6 4 6 1 2 8"
++ 127 (so it is 131, 133, ...) etc. However, checking for exit might
+reduce PCM sample quality a bit, so there is also a mode in which the
+exit check is not performed. See below.
+
+Compared to LambdaSpeak 3, in LS FS There is more control over the
+Amdrum / PCM sample quality. LS FS features three 
+different Amdrum modes. The default is the `Standard` Amdrum mode. 
+This mode does a lightshow on the LED Segment Bar, and also performs 
+the exit check. The PCM clipping range is set to 5. 
+
+The Amdrum mode / PCM sample quality can be specified as follows, 
+by first determining the mode, and then the mode is used 
+when activate via `&E3`: 
+
+- `&FE`: Use Standard Amdrum mode. This
+has a default PCM clipping range of 5, the lightshow is 
+enabled, and the "exit check" is performed. 
+- `&FD` : Use Custom Amdrum mode. When `&E3` is activated, 4 parameters have to
+be specified and sent to port `&FBEE` first, then the mode is
+enabled with these custom settings. These 4 bytes: 1. lightshow off / on (0, 1), 
+2. perform exit check no / yes (0,1),  3. PCM sample byte clipping range (from 0 to 127), 
+4. PCM smoothing delta (from 0 to 127). 
+- `&FC` : Use High Quality Amdrum mode. Like Standard mode, but without lightshow and 
+exit check is not performed, hence hence resulting in highest PCM sample quality
+as the CPC databus can be sampled with highest frequency hence resulting in highest
+possible PCM sample reproduction. 
 
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
