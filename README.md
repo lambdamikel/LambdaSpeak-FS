@@ -49,10 +49,11 @@ For PCM sound, this give the optimal performance in our opinion.
 
 As with the LambdaSpeak 3, the Amdrum / PCM sample playing mode is
 entered by sending control byte `&E3`. A new feature is that you can
-exit / leave that mode by sending the "exit sequence": "4 6 4 6 1 2 8"
-+ 127 (so it is 131, 133, ...) etc. However, checking for exit might
-reduce PCM sample quality a bit, so there is also a mode in which the
-exit check is not performed. See below.
+exit / leave that mode by sending the "exit sequence".  The sequence
+is `4 6 4 6 1 2 8`, plus 127, so `131, 133, 131, 133, 128, 129, 135`.
+However, checking for exit might reduce PCM sample quality a bit, so
+there is also a mode in which the exit check is not performed. See
+below.
 
 Compared to LambdaSpeak 3, in LS FS There is more control over the
 Amdrum / PCM sample quality. LS FS features three 
