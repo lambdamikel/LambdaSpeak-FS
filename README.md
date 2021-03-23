@@ -30,11 +30,12 @@ EEPROM-based (autonomous PCM sample-playing) functions are not
 available either. 
 
 But it got a serial high speed connecter for additional usage.
-Moreover, it features a new `echo-byte` mode, code `&C4` to enable, in
-which the CPC can take control over the LED Bar Segment Display. This
-is basically a full 8bit digital output. One can simply remove the
-Segment Bar LED Display and use the socket for 8bit digital output,
-e.g., by sticking DuPont wires into the DIL socket.
+Moreover, it features a new `echo-byte` mode, code `&C4` (yes, an
+explosive feature it is!) to enable, in which the CPC can take control
+over the LED Bar Segment Display. This is basically a full 8bit
+digital output. One can simply remove the Segment Bar LED Display and
+use the socket for 8bit digital output, e.g., by sticking DuPont wires
+into the DIL socket.
 
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
