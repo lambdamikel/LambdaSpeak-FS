@@ -33,11 +33,11 @@ available either.
 
 But it got a serial high speed connecter for additional usage.
 Moreover, it features a new `echo-byte` mode, code `&C4` (yes, an
-explosive feature it is!) to enable, in which the CPC can take control
-over the LED Bar Segment Display. This is basically a full 8bit
-digital output. One can simply remove the Segment Bar LED Display and
-use the socket for 8bit digital output, e.g., by sticking DuPont wires
-into the DIL socket.
+explosive feature it is!). This mode allows the CPC to take control
+over the LED Bar Segment Display, which is actually 8 full 8bit
+digital output port. It can be used as such by simply removing the
+Segment Bar LED Display from the DIL socket and, e.g., by sticking
+DuPont connector cables into it (instead of the LEDs). 
 
 Another difference is optimized audio performance. Due to the absence
 of the SP0256-AL2, we adopted a much simpler audio routing path,
