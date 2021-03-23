@@ -70,13 +70,12 @@ has a default PCM clipping range of 5, the lightshow is
 enabled, and the "exit check" is performed. 
 - `&FD` : Use Custom Amdrum mode. When `&E3` is activated, 4 parameters have to
 be specified and sent to port `&FBEE` first, then the mode is
-enabled with these custom settings. These 4 bytes: 1) lightshow off / on (0, 1), 
-2) perform exit check no / yes (0,1),  3) PCM sample byte clipping range (from 0 to 127), 
-4) PCM smoothing delta (from 0 to 127). 
-- `&FC` : Use High Quality Amdrum mode. Like Standard mode, but without lightshow and 
-exit check is not performed, hence hence resulting in highest PCM sample quality
-as the CPC databus can be sampled with highest frequency hence resulting in highest
-possible PCM sample reproduction. 
+enabled with these custom settings. These 4 bytes: first lightshow off / on (0, 1), 
+second perform exit check no / yes (0, 1),  third PCM sample byte clipping range (from 0 to 127),  
+and fourth PCM smoothing delta (from 0 to 127). 
+- `&FC` : Use High Quality Amdrum mode. Like the Standard mode, but without lightshow and 
+the exit check is not performed, hence resulting in highest PCM sample quality possible, 
+as the CPC databus is sampled with highest frequency. 
 
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
