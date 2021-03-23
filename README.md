@@ -63,7 +63,7 @@ clipping range is set to 5.
 
 The Amdrum mode / PCM sample quality can be specified as follows, 
 by first determining the mode, and then the mode is used 
-when activate via `&E3`: 
+when activated via `&E3`: 
 
 - `&FE`: Use Standard Amdrum mode. This
 has a default PCM clipping range of 5, the lightshow is 
