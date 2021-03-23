@@ -55,11 +55,11 @@ However, checking for exit might reduce PCM sample quality a bit, so
 there is also a mode in which the exit check is not performed. See
 below.
 
-Compared to LambdaSpeak 3, in LS FS There is more control over the
-Amdrum / PCM sample quality. LS FS features three 
-different Amdrum modes. The default is the `Standard` Amdrum mode. 
-This mode does a lightshow on the LED Segment Bar, and also performs 
-the exit check. The PCM clipping range is set to 5. 
+Compared to LambdaSpeak 3, LS FS offers more control over the Amdrum /
+PCM sample quality. LS FS features three different Amdrum modes. The
+default is the `Standard` Amdrum mode.  This mode does a lightshow on
+the LED Segment Bar, and also performs the exit check. The PCM
+clipping range is set to 5.
 
 The Amdrum mode / PCM sample quality can be specified as follows, 
 by first determining the mode, and then the mode is used 
