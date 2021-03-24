@@ -31,39 +31,41 @@ details. LambdaSpeak FS does not have the SP0256-AL2, and the
 EEPROM-based (autonomous PCM sample-playing) functions are not
 available either. 
 
-But it got a serial high speed connecter for additional usage.
-Moreover, it features a new `echo-byte` mode, code `&C4` (yes, an
-explosive feature it is!). This mode allows the CPC to take control
-over the LED Bar Segment Display, which is actually 8 full 8bit
-digital output port. It can be used as such by simply removing the
-Segment Bar LED Display from the DIL socket and, e.g., by sticking
-DuPont connector cables into it (instead of the LEDs). 
+But it has a serial high-speed connector for additional usage.
+Moreover, it features a new `echo-byte` mode / control byte / mode 
+`&C4` (yes, an explosive feature it is!). This mode allows the CPC to
+take control over the LED Bar Segment Display, which is actually a 
+full digital 8bit output port. It can be used as such by simply
+removing the Segment Bar LED Display from the DIL socket and, e.g., by 
+sticking DuPont connector cables into it (instead of the LEDs).
 
 Another difference is optimized audio performance. Due to the absence
 of the SP0256-AL2, we adopted a much simpler audio routing path,
 omitting the audio op-amp for mixing, and optimized the filter
-performance for a crystal clear and sharp sound. In comparison,
-LambdaSpeak 3 sounds "warmer" and less clear / digital. Somewhat
+performance for a crystal clear and sharp digital sound. In
+comparison, LambdaSpeak 3 sounds "warmer" and less clear. Somewhat
 similar to an Amiga 500 with filter on / off (LSFS is filter off).
-For PCM sound, this give the optimal performance in our opinion. 
+For PCM sound, this give the optimal performance in our opinion.
 
-As with the LambdaSpeak 3, the Amdrum / PCM sample playing mode is
-entered by sending control byte `&E3`. A new feature is that you can
-exit / leave that mode by sending the "exit sequence".  The sequence
-is `4 6 4 6 1 2 8`, plus 127, so `131, 133, 131, 133, 128, 129, 135`.
-However, checking for exit might reduce PCM sample quality a bit, so
-there is also a mode in which the exit check is not performed. See
-below.
+As with LambdaSpeak 3, the Amdrum / PCM sample playing mode is entered
+by sending control byte `&E3`. A new feature is that the PCM mode can
+be exited programmatically by sending the "exit sequence", without
+having to power cycle the board. This sequence is `4 6 4 6 1 2 8`,
+plus 127, so `131, 133, 131, 133, 128, 129, 135`.  However, checking
+for this sequence in the stream of PCM sample bytes is expensive and
+hence might reduce PCM sample quality slightly, so there is also a
+mode in which the exit check is not being performed. See below.
 
-Compared to LambdaSpeak 3, LS FS offers more control over the Amdrum /
-PCM sample quality. LS FS features three different Amdrum modes. The
+Compared to LambdaSpeak 3, LSFS offers more control over the Amdrum /
+PCM sample quality. LSFS features three different Amdrum modes. The
 default is the `Standard` Amdrum mode.  This mode does a lightshow on
 the LED Segment Bar, and also performs the exit check. The PCM
-clipping range is set to 5.
+clipping range is set to 5, i.e., PCM bytes below 5 and above 250 will
+be clipped and set to 5 resp. 250. 
 
-The Amdrum mode / PCM sample quality can be specified as follows, 
-by first determining the mode, and then the mode is used 
-when activated via `&E3`: 
+The Amdrum mode / PCM sample quality can be specified as follows, by
+first determining the mode, and then by using the mode by sending `&E3`
+to enable the Amdrum mode: 
 
 - `&FE`: Use Standard Amdrum mode. This
 has a default PCM clipping range of 5, the lightshow is 
@@ -136,3 +138,13 @@ More details on [TFM's homepage.](http://futureos.cpc-live.com/)
 - If you are going to socket the ICs, then you will need to cut out the middle
 struts from the DIL sockets to accomodate them.
 - Use a fine side cutter to cut off the `SQW` and `32K` pins from the RTC module 
+
+## Schematics
+
+![Schematics](./schematics/schematics.png) 
+
+See [here](./schematics/schematics.pdf)  for a PDF version. 
+
+***Note that the Q, R, and C values should be taken from the above BOM instead, don't use the values from the schematics, some have been "optimized" by hand after the PCBs have been produced.***
+
+Enjoy! 
