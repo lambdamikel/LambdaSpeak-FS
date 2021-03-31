@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 6
+// Version 7
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 6
+#define VERSION 7
 
 #include "HAL9000_defines.h"    
 
@@ -3014,26 +3014,20 @@ ISR(USART0_RX_vect) {
   
   uint8_t data = UDR0; 
   
-  if (usart_ring_buffer) {
-    if (usart_input_buffer_index >= SEND_BUFFER_SIZE) {
-      usart_input_buffer_index = 0; 
-    }    
+  if (usart_input_buffer_index < SEND_BUFFER_SIZE) {
     send_msg[usart_input_buffer_index] = data; 
-    usart_input_buffer_index++;    
+    usart_input_buffer_index++;
+  } else if ( usart_input_buffer_index < TOTAL_BUFFER_SIZE) {
+    buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = data; 
+    usart_input_buffer_index++; // might be full now, TOTAL_BUFFER_SIZE reched, further input not buffered until flushed!     
+  }
 
-  } else {
-    
-    // normal operation 
-
-    if (usart_input_buffer_index < SEND_BUFFER_SIZE) {
-      send_msg[usart_input_buffer_index] = data; 
-      usart_input_buffer_index++;
-    } else if ( usart_input_buffer_index < TOTAL_BUFFER_SIZE) {
-      buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = data; 
-      usart_input_buffer_index++; // might be full now, TOTAL_BUFFER_SIZE reched, further input not buffered until flushed!     
-    }
+  if (usart_input_buffer_index == TOTAL_BUFFER_SIZE && usart_ring_buffer) {
+    // wrap around, buffer full 
+    usart_input_buffer_index = 0;       
   }
 }
+
  
 //
 // TX Transmit
@@ -3143,7 +3137,10 @@ void usart_mode_loop(void) {
 
   uint8_t direct_mode = 0;  
   
-  usart_ring_buffer = 0; 
+  // usart_ring_buffer = 0; 
+  
+  // version 7: change default to wrap around! 
+  usart_ring_buffer = 1; 
 
   serial_busy;  
 
@@ -3200,7 +3197,7 @@ void usart_mode_loop(void) {
 	// escape: 255 255 -> 255 ! 
 
 	if (direct_mode) {
-	  USART_Transmit(databus); 
+	  USART_Transmit1(databus); 
 	} else {
 
 	  if (from_cpc_input_buffer_index < SEND_BUFFER_SIZE) {
@@ -3246,7 +3243,7 @@ void usart_mode_loop(void) {
 	    
 	      z80_halt;
 
-	      if ( cpc_read_cursor >= SEND_BUFFER_SIZE) 
+	      if ( cpc_read_cursor == TOTAL_BUFFER_SIZE) 
 		cpc_read_cursor = 0; 
 
 	      databus = send_msg[ cpc_read_cursor ]; 
@@ -3269,7 +3266,7 @@ void usart_mode_loop(void) {
 
 	  } // end while - cannot exit here! 
 
-	  usart_ring_buffer = 0; 
+	  usart_ring_buffer = 1; 
 	  
 	  break;	  
 
@@ -3352,7 +3349,7 @@ void usart_mode_loop(void) {
 	    	    
 	    if (databus) {
 	    
-	      if ( cpc_read_cursor >= SEND_BUFFER_SIZE) 
+	      if ( cpc_read_cursor == TOTAL_BUFFER_SIZE) 
 		cpc_read_cursor = 0; 
 
 	      databus = send_msg[ cpc_read_cursor ]; 
@@ -3370,7 +3367,7 @@ void usart_mode_loop(void) {
 	    
 	  } // end while - cannot exit here! 
 
-	  usart_ring_buffer = 0; 
+	  usart_ring_buffer = 1; 
 	  
 	  break;	  
 
@@ -3383,7 +3380,7 @@ void usart_mode_loop(void) {
 
 	  // z80_halt; 
 
-	  USART_Transmit(databus); 
+	  USART_Transmit1(databus); 
 
 	  break; 
 
@@ -3394,18 +3391,30 @@ void usart_mode_loop(void) {
 
 	  break; 
 	  
-	case 3 : // ask for low byte number of bytes in USART input buffer
+	case 3 ... 4 : {
 
-	  SEND_TO_CPC_DATABUS( usart_input_buffer_index & 0xFF); 
+	  uint16_t delta = 0; 
 
+	  if ( cpc_read_cursor != usart_input_buffer_index) { 
+	    if (cpc_read_cursor < usart_input_buffer_index) { 
+	      delta = usart_input_buffer_index - cpc_read_cursor; 
+	    } else {
+	      delta = TOTAL_BUFFER_SIZE - cpc_read_cursor + usart_input_buffer_index ; 
+	    }
+	  }
+
+	  if (databus == 3) {
+	    delta &= 0xFF; 
+	  } else {
+	    delta >>= 8; 
+	  }
+
+	  SEND_TO_CPC_DATABUS( delta ); 
+
+  	  } 	
+	  
 	  break; 
-
-	case 4 : // ask for high byte number of bytes in USART input buffer
-
-	  SEND_TO_CPC_DATABUS( usart_input_buffer_index >> 8); 
-
-	  break; 
-
+	  
 	case 5 : // ask if buffer is full 
 
 	  SEND_TO_CPC_DATABUS(usart_input_buffer_index == TOTAL_BUFFER_SIZE); 
@@ -3423,6 +3432,10 @@ void usart_mode_loop(void) {
 
 	  // SEND_TO_CPC_DATABUS( cpc_read_cursor < buffer_index  ); 
 
+	  // DON'T USE THIS, BECAUSE OF DELAY!
+	  // SEND_TO_CPC_DATABUS( cpc_read_cursor != usart_input_buffer_index ); 
+
+	  
 	  SEND_TO_CPC_DATABUS( cpc_read_cursor != usart_input_buffer_index ); 
 
 	  break; 
@@ -3461,6 +3474,11 @@ void usart_mode_loop(void) {
 	      databus = buffer[cpc_read_cursor - SEND_BUFFER_SIZE];
 	      cpc_read_cursor++;
 	    }
+	  }
+
+	  if (cpc_read_cursor == TOTAL_BUFFER_SIZE && usart_ring_buffer) {
+	    // wrap around
+	    cpc_read_cursor = 0;       
 	  }
 
 	  SEND_TO_CPC_DATABUS( databus); 
@@ -3604,6 +3622,22 @@ void usart_mode_loop(void) {
 	  
 	  break; 
 
+	case 60 : // turn on wrap around 
+
+	  usart_ring_buffer = 1; 
+	  usart_input_buffer_index = 0; 
+	  cpc_read_cursor = 0; 
+
+	  break; 
+
+	case 70 : // turn off wrap around 
+
+	  usart_ring_buffer = 0; 
+	  usart_input_buffer_index = 0; 
+	  cpc_read_cursor = 0; 
+
+	  break; 
+
 	case 0xF2 : get_full_mode(); break; 
 
 	case 0xC3 : 
@@ -3622,7 +3656,7 @@ void usart_mode_loop(void) {
 	
       if (direct_mode) {
 
-	USART_Transmit(databus); 
+	USART_Transmit1(databus); 
 
       } else
 
