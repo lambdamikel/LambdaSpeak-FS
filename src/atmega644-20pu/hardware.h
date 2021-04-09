@@ -104,6 +104,10 @@
 #define speech_native_busy         DATA_TO_CPC(0) 
 #define serial_busy                DATA_TO_CPC(0) 
 
+#define midi_serial_ready          DATA_TO_CPC(2) 
+#define midi_serial_ready2         DATA_TO_CPC(3) 
+#define midi_serial_busy           DATA_TO_CPC(4) 
+
 //
 // CPC Data WRite - From Address Decoder! Trigger 
 // 

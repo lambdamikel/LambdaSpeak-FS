@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 7
+// Version 8
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 7
+#define VERSION 8
 
 #include "HAL9000_defines.h"    
 
@@ -121,6 +121,12 @@ static volatile uint8_t databus = 0;
 static volatile uint8_t databus1 = 0; 
 static volatile uint8_t databus2 = 0; 
 
+static volatile uint8_t  byte_avail = 0; 
+static volatile uint16_t bytes_available = 0; 
+static volatile uint8_t  WRITE_REQUEST_HAPPENED = 0; 
+
+static volatile uint8_t SERIAL_BYTE_AVAILABLE = 0; 
+static volatile uint8_t SERIAL_BYTE_RECEIVED = 0; 
 
 //
 // Speech Buffer
@@ -487,23 +493,36 @@ void process_reset(void) {
   soft_reset(); 
 }
 
+//
+//
+// 
 
-ISR(SOFT_RESET_INT_VEC) { // reset handler PC5 = SOFT_RESET_INT = D21 
-
-  if (bit_is_clear(SOFT_RESET_PIN, SOFT_RESET_PIN_NUMBER))
+ISR(SOFT_RESET_INT_VEC) { // reset handler 
+  if (bit_is_clear(SOFT_RESET_PIN, SOFT_RESET_PIN_NUMBER)) {
     process_reset();  
-  
+  } else {
+    
+    WRITE_REQUEST_HAPPENED++; 
+    
+  }
 }
   
 //
 //
 // 
 
-
 void init_reset_handler(void) {
 
   setBit(PCICR, PCIE2); // change interrupts on 
+  
+  // setBit(PCMSK2, SOFT_RESET_INT); // RESET PIN = PC6 = D22 
+
+  // PCMSK2 |= (1 << PCINT23) | (1 << SOFT_RESET_INT);  
+
   setBit(PCMSK2, SOFT_RESET_INT); // RESET PIN = PC6 = D22 
+  
+  // setBit(PCMSK2, PCINT23); // IOREQ WRITE PIN CHANGE INTERRUPT
+
 
 }
 
@@ -3011,23 +3030,20 @@ void usart_tx_off(void) {
 //
 
 ISR(USART0_RX_vect) {  
-  
-  uint8_t data = UDR0; 
-  
-  if (usart_input_buffer_index < SEND_BUFFER_SIZE) {
-    send_msg[usart_input_buffer_index] = data; 
-    usart_input_buffer_index++;
-  } else if ( usart_input_buffer_index < TOTAL_BUFFER_SIZE) {
-    buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = data; 
-    usart_input_buffer_index++; // might be full now, TOTAL_BUFFER_SIZE reched, further input not buffered until flushed!     
+
+  SERIAL_BYTE_RECEIVED = UDR0; 
+  if (bit_is_set(IOREQ_PIN, IOREQ_WRITE)) {
+    WRITE_REQUEST_HAPPENED = 1; 
   }
 
-  if (usart_input_buffer_index == TOTAL_BUFFER_SIZE && usart_ring_buffer) {
-    // wrap around, buffer full 
-    usart_input_buffer_index = 0;       
+  // check that previous byte was processed: 
+  if (! SERIAL_BYTE_AVAILABLE) {
+    // register it for processing
+    SERIAL_BYTE_AVAILABLE = 1; 
+    
   }
+
 }
-
  
 //
 // TX Transmit
@@ -3037,6 +3053,8 @@ ISR(USART0_RX_vect) {
 void USART_Transmit1( unsigned char data ){
    while ( !( UCSR0A & (1<<UDRE0)) ) {  }; 
    UDR0 = data;   
+   while ( !( UCSR0A & (1<<TXC0)) ) {  }; 
+
  } 
 
 void USART_Transmit( unsigned char data ){
@@ -3111,6 +3129,7 @@ void USART_sendBuffer(uint16_t length) {
 //
 //
 
+/* 
 void USART_ISR_Transmit( unsigned char data ){
   databus2 = data;
   UCSR0B |= (1<<UDRIE0); // enable UDRE interrupt  
@@ -3121,6 +3140,7 @@ ISR(USART0_UDRE_vect) {
   UDR0 = databus2; 
 }
 
+*/ 
 
 /* 
 ISR(USART0_TX_vect) {
@@ -3131,15 +3151,86 @@ ISR(USART0_TX_vect) {
 
 //
 //
+//
+
+/* 
+void enable_iowrite_isr(void) {
+  // not needed, because the RESET HANDLER is already on: 
+
+  // Enable 
+  PCICR |= (1 << PCIE2); 
+  // And enable for PC/ / PCINT23: 
+  PCMSK2 |= (1 << PCINT23) | (1 << SOFT_RESET_INT);  
+  
+}
+ 
+void disable_iowrite_isr(void) {
+  // And disable for PC/ / PCINT23 (only RESET remains active) 
+  PCMSK2 = (1 << SOFT_RESET_INT);  
+}
+*/ 
+
+//
+//
 // 
+
+uint8_t serial_main_loop_read(void) {
+
+  // LOCAL !! 
+  uint8_t databus = 0; 
+  
+  z80_run;   
+
+  do {
+
+    // buffer received bytes: 
+
+    if (SERIAL_BYTE_AVAILABLE) {
+      z80_halt; // make sure we are not missing the IO WRITE request!
+      READY_ON; 
+
+      SERIAL_BYTE_AVAILABLE = 0; 
+      
+      if (usart_input_buffer_index < SEND_BUFFER_SIZE) 
+	send_msg[usart_input_buffer_index] = SERIAL_BYTE_RECEIVED; 
+      else 
+	buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = SERIAL_BYTE_RECEIVED;   
+	  
+      if (usart_input_buffer_index == (TOTAL_BUFFER_SIZE-1)) {
+	if ( usart_ring_buffer) {
+	  // wrap around, buffer full 
+	  usart_input_buffer_index = 0;       
+	  bytes_available++;     
+	} 
+      } else {
+	usart_input_buffer_index++;    
+	bytes_available++;     
+      } 
+      z80_run; 
+    }
+
+    // break out if IOREQ WRITE happened
+    if (WRITE_REQUEST_HAPPENED || bit_is_set(IOREQ_PIN, IOREQ_WRITE)) {
+      WRITE_REQUEST_HAPPENED = 0; 
+      cli(); 
+      loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+      z80_halt;   
+      DATA_FROM_CPC(databus); 
+      READY_OFF;  
+      sei(); 
+
+      return databus; 
+      break;
+    }   
+
+  } while (1); 
+
+}
 
 void usart_mode_loop(void) {
 
   uint8_t direct_mode = 0;  
   
-  // usart_ring_buffer = 0; 
-  
-  // version 7: change default to wrap around! 
   usart_ring_buffer = 1; 
 
   serial_busy;  
@@ -3161,18 +3252,17 @@ void usart_mode_loop(void) {
   
   CUR_MODE = SERIAL_M; 
 
-  stop_timer;
+  stop_timer; 
 
   while (1) {
 
-    serial_busy;   
+    READY_ON;    
+    serial_ready;
+    databus = serial_main_loop_read(); 
+    serial_busy;
+    z80_run; 
 
-    while ( !( UCSR0A & (1<<UDRE0)) ) { }; 
-
-    READY_ON;
-    READ_ARGUMENT_FROM_DATABUS(databus); 
-
-    // z80_halt;
+    // READ_ARGUMENT_FROM_DATABUS(databus);     
 
     if (databus == 255) {
 
@@ -3180,11 +3270,16 @@ void usart_mode_loop(void) {
       // receive command byte - what to do? 
 
       // z80_run;
-
       // sei(); 
 
       TRANSMIT_ON;
-      READ_ARGUMENT_FROM_DATABUS(databus); 
+
+      serial_ready;
+      databus = serial_main_loop_read(); 
+      serial_busy;
+      z80_run; 
+
+      // READ_ARGUMENT_FROM_DATABUS(databus); 
       LEDS_OFF; 
 
       serial_busy;   
@@ -3207,15 +3302,15 @@ void usart_mode_loop(void) {
 	    buffer[ from_cpc_input_buffer_index  - SEND_BUFFER_SIZE] = databus; 
 	    from_cpc_input_buffer_index++;
 	  }
-
 	}
 	 
       } else {
 
 	// dispatch, decode command byte
+
 	switch (databus) {
 
-	case 10 : // USART MONITOR OLD - CANNOT TAKE COMMANDS FROM CPC 
+	case 10 : // USART MONITOR OLD - CANNOT TAKE COMMANDS FROM CPC - OBSOLETE FOR NOW!
 
 	  usart_ring_buffer = 1;  // wrap around! 
 
@@ -3229,155 +3324,147 @@ void usart_mode_loop(void) {
 
 	  while (1) {
 	    
-	    TRANSMIT_ON; 
-	    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
-	    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
-	    TRANSMIT_OFF; 
+	    //TRANSMIT_ON; 
+	    //loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+	    //loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+	    //TRANSMIT_OFF; 
 
-	    cli(); 
+	    serial_main_loop_read(); 
 
 	    databus = cpc_read_cursor != usart_input_buffer_index;
 	    DATA_TO_CPC(databus); 
 	    	    
 	    if (databus) {
 	    
-	      z80_halt;
-
+	      if (cpc_read_cursor < SEND_BUFFER_SIZE) {
+		databus = send_msg[cpc_read_cursor]; 
+	      } else {
+		databus = buffer[cpc_read_cursor - SEND_BUFFER_SIZE]; 		
+	      }
+	      
+	      cpc_read_cursor++;
 	      if ( cpc_read_cursor == TOTAL_BUFFER_SIZE) 
 		cpc_read_cursor = 0; 
-
-	      databus = send_msg[ cpc_read_cursor ]; 
-	      cpc_read_cursor++;
-
-	      z80_run;
 	    
-	      READY_ON; 
-	      loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
-	      loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 	      
-	      DATA_TO_CPC(databus); 
-	      READY_OFF; 
+	      // READY_ON; 
+	      // loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+	      // loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 	      
+	      
+	      serial_main_loop_read(); 
+	      DATA_TO_CPC(databus); 	      
+
+	      // READY_OFF; 
 
 	      // SOFT MIDI THROUGH: 
 	      USART_Transmit1(databus); 
 	    	      
 	    }	 
 
-	    sei(); 
+	    // sei(); 
 
 	  } // end while - cannot exit here! 
 
-	  usart_ring_buffer = 1; 
-	  
-	  break;	  
+	  break;
 
 	case 50 : // USART MONITOR NEW - WITH COMMANDS FROM CPC 
 
 	  usart_ring_buffer = 1;  // wrap around! 
 
 	  usart_input_buffer_index = 0; 
-	  SERIAL_ON; 
+	  cpc_read_cursor = 0;  
 
+	  SERIAL_ON; 
 	  usart_init(); 
 
-	  cpc_read_cursor = 0;  
 	  LEDS_OFF; 
 
-	  direct_mode = 0; // used for sending / buffering! 
-	  databus1 = 0; // used for sending / buffering! 
+	  databus = 0; 
+	  databus1 = 0; 
+	  databus2 = 0; 
 
-	  while (1) {	  
+	  bytes_available = 0; 
 
-	    TRANSMIT_ON;  
-	    SERIAL_ON; 
+	  READY_ON; 	    
 
-	    if (direct_mode) {
-	      USART_Transmit1(databus1);	       
-	      direct_mode = 0; 
-	      // wait for transmit to finish: 
-	      // TXC0 becomes 1 when Transmission Complete
-	      while ( !( UCSR0A & (1<<TXC0)) ) {  }; 
-	      _delay_us(500); 
-	    }
+	  // enable_iowrite_isr(); 
 
-	    z80_run;
-	    
-	    loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 	    
-	    loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 	      
+	  while (1) {
 
-	    cli(); // protect from interrupts 
-	    LAMBDA_EPSON_ON; 
-	    DATA_FROM_CPC(databus); 
-	    SERIAL_ON;  
-	    sei(); 
+	    databus = serial_main_loop_read(); 
 
-	    TRANSMIT_OFF; 
+	    // midi_serial_busy;
 
-	    if (databus == 255) {
+	    // first byte: determine mode 
 
-	      // read second byte... 255 is escape symbol 
-	      READY_ON; 
+	    if (databus1 == 0 || databus1 == 2) { // 0 or 2: 
+	      switch (databus) {
 
-	      loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
-	      loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 	      
-
-	      z80_halt;
-
-	      cli(); 
-	      LAMBDA_EPSON_ON; 
-	      DATA_FROM_CPC(databus); 
-	      SERIAL_ON;  
-	      sei(); 
-
-	      READY_OFF; 	      
-
-	      if (databus == 20) {
-		z80_run;
+	      case 1 : databus1 = 1; break;  // send byte when 2nd byte received
+	      case 2 : 
+		databus1 = 0; 
+		byte_avail = bytes_available > 0 ? 1 : 0; 
+		// this is 0 or 1, midi_ready_signal is 2, so we cannot confuse the 2 
+		if (byte_avail) {
+		  // save the byte, in case the buffer overflows... 
+		  if (cpc_read_cursor < SEND_BUFFER_SIZE) {
+		    databus2 = send_msg[cpc_read_cursor]; 
+		  } else {
+		    databus2 = buffer[cpc_read_cursor - SEND_BUFFER_SIZE]; 		
+		  }	      
+		}
+		
+		DATA_TO_CPC(byte_avail); 
 		break; 
-	      } else if (databus == 255) {
-		direct_mode = 1; 
-		databus1 = 255; 
-	      } else {
-		// do nothing 
-	      }
+
+	      case 3 : 
+		// signal availability and give CPC time to read: 
+		// this is 0 or 1, midi_ready_signal is 2, so we cannot confuse the 2 
+		if (databus1 == 0) {
+		  // deliver low nibble of current databus2 byte 
+		  // make sure value > 15 to distinguish from synchronization / ready signals!!
+		  databus = ( databus2 & 0b00001111 ) << 4 | 0b00001111; 
+		  databus1 = 2; 
+		} else { 
+		  // databus1 == 2: 
+		  // deliver high nibble of current databus2 byte  
+		  databus = ( databus2 & 0b11110000 ) | 0b00001111;  
+		  databus1 = 0; 
+		  if (byte_avail) {
+		    bytes_available--; 
+		    cpc_read_cursor++;
+		    if ( cpc_read_cursor == TOTAL_BUFFER_SIZE) 
+		      cpc_read_cursor = 0; 
+		  } 
+		} 
+
+		DATA_TO_CPC(databus); 
+		break; 
+
+	      case 4 : 
+		// disable_iowrite_isr(); 
+		return; 
+		break; 
+	      } 
 	    } else {
-	      direct_mode = 1; 
-	      databus1 = databus; 
-	    }
-
-	    databus = cpc_read_cursor != usart_input_buffer_index;
-	    DATA_TO_CPC(databus); 
-	    	    
-	    if (databus) {
-	    
-	      if ( cpc_read_cursor == TOTAL_BUFFER_SIZE) 
-		cpc_read_cursor = 0; 
-
-	      databus = send_msg[ cpc_read_cursor ]; 
-	      cpc_read_cursor++;
-
-	      z80_run;
-
-	      READY_ON; 
-	      loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
-	      loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 	      
-	      DATA_TO_CPC(databus); 
-	      READY_OFF; 
-
+	      // databus1 == 1: transmit received byte
+	      USART_Transmit1(databus); 
+	      databus1 = 0; 	     
 	    }	 
-	    
 	  } // end while - cannot exit here! 
-
-	  usart_ring_buffer = 1; 
 	  
-	  break;	  
-
+	  break;	  	  
 
 	case 1 :  // write USART single byte 
 
 	  // z80_run;
 
-	  READ_ARGUMENT_FROM_DATABUS(databus); 
+	  serial_ready;
+	  databus = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
 
+	  // READ_ARGUMENT_FROM_DATABUS(databus); 
+	  
 	  // z80_halt; 
 
 	  USART_Transmit1(databus); 
@@ -3393,8 +3480,9 @@ void usart_mode_loop(void) {
 	  
 	case 3 ... 4 : {
 
-	  uint16_t delta = 0; 
+	  uint16_t delta = bytes_available; 
 
+	  /* 
 	  if ( cpc_read_cursor != usart_input_buffer_index) { 
 	    if (cpc_read_cursor < usart_input_buffer_index) { 
 	      delta = usart_input_buffer_index - cpc_read_cursor; 
@@ -3402,6 +3490,7 @@ void usart_mode_loop(void) {
 	      delta = TOTAL_BUFFER_SIZE - cpc_read_cursor + usart_input_buffer_index ; 
 	    }
 	  }
+	  */
 
 	  if (databus == 3) {
 	    delta &= 0xFF; 
@@ -3431,22 +3520,23 @@ void usart_mode_loop(void) {
 	case 7 : // check if byte available 
 
 	  // SEND_TO_CPC_DATABUS( cpc_read_cursor < buffer_index  ); 
-
-	  // DON'T USE THIS, BECAUSE OF DELAY!
+	  
 	  // SEND_TO_CPC_DATABUS( cpc_read_cursor != usart_input_buffer_index ); 
 
-	  
-	  SEND_TO_CPC_DATABUS( cpc_read_cursor != usart_input_buffer_index ); 
+	  byte_avail = bytes_available > 0 ? 1 : 0; 
+
+	  SEND_TO_CPC_DATABUS( byte_avail ); 
 
 	  break; 
 
 	case 8 : // get byte for CPC at current USART input buffer position
 
 	  databus = 0; 	    
+	  byte_avail = bytes_available > 0 ? 1 : 0; 
 
 	  // if (cpc_read_cursor >= 0 && cpc_read_cursor < buffer_index ) {
 
-	  if (cpc_read_cursor != usart_input_buffer_index ) {
+	  if (byte_avail ) {
 
 	    if ( cpc_read_cursor < SEND_BUFFER_SIZE) {
 	      databus = send_msg[ cpc_read_cursor ]; 
@@ -3462,17 +3552,20 @@ void usart_mode_loop(void) {
 	case 9 : // get next byte for CPC in USART input buffer
 
 	  databus = 0; 
+	  byte_avail = bytes_available > 0 ? 1 : 0; 
 	  
 	  // if (cpc_read_cursor >= 0 && cpc_read_cursor < buffer_index ) {
 
-	  if (cpc_read_cursor != usart_input_buffer_index ) {
+	  if (byte_avail ) {
 	    
 	    if ( cpc_read_cursor < SEND_BUFFER_SIZE) {
 	      databus = send_msg[ cpc_read_cursor ]; 
 	      cpc_read_cursor++;
+	      bytes_available--; 
 	    } else if ( cpc_read_cursor < TOTAL_BUFFER_SIZE) {
 	      databus = buffer[cpc_read_cursor - SEND_BUFFER_SIZE];
 	      cpc_read_cursor++;
+	      bytes_available--; 
 	    }
 	  }
 
@@ -3489,9 +3582,19 @@ void usart_mode_loop(void) {
 
 	  // z80_run;
 
-	  READ_ARGUMENT_FROM_DATABUS(databus); 
-	  READ_ARGUMENT_FROM_DATABUS(databus1); 
+	  serial_ready;
+	  databus = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
 
+	  // READ_ARGUMENT_FROM_DATABUS(databus); 
+	  serial_ready;
+	  databus1 = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
+
+	  // READ_ARGUMENT_FROM_DATABUS(databus1); 
+	 
 	  // z80_halt; 
 	  
 	  cpc_read_cursor = databus + (databus1 << 8); 
@@ -3571,8 +3674,13 @@ void usart_mode_loop(void) {
 
 	  // z80_run;
 
-	  READ_ARGUMENT_FROM_DATABUS(SERIAL_BAUDRATE); 
+	  serial_ready;
+	  SERIAL_BAUDRATE = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
 
+	  // READ_ARGUMENT_FROM_DATABUS(SERIAL_BAUDRATE); 
+	  
 	  // z80_halt;
 
 	  usart_init(); 
@@ -3583,7 +3691,12 @@ void usart_mode_loop(void) {
 
 	  // z80_run; 
 
-	  READ_ARGUMENT_FROM_DATABUS(SERIAL_WIDTH); 
+	  serial_ready;
+	  SERIAL_WIDTH = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
+
+	  // READ_ARGUMENT_FROM_DATABUS(SERIAL_WIDTH); 
 
 	  // z80_halt; 
 
@@ -3594,9 +3707,14 @@ void usart_mode_loop(void) {
 	case 32 : // set PARITY
 
 	  // z80_run; 
-	  
-	  READ_ARGUMENT_FROM_DATABUS(SERIAL_PARITY); 
 
+	  serial_ready;
+	  SERIAL_PARITY = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
+
+	  // READ_ARGUMENT_FROM_DATABUS(SERIAL_PARITY); 	 
+	  
 	  // z80_halt; 
 
 	  usart_init(); 
@@ -3607,7 +3725,12 @@ void usart_mode_loop(void) {
 
 	  // z80_run; 
 	  
-	  READ_ARGUMENT_FROM_DATABUS(SERIAL_STOP_BITS); 
+	  serial_ready;
+	  SERIAL_STOP_BITS = serial_main_loop_read(); 
+	  serial_busy;
+	  z80_run; 
+
+	  // READ_ARGUMENT_FROM_DATABUS(SERIAL_STOP_BITS); 	  
 
 	  // z80_halt;
 
@@ -3617,7 +3740,12 @@ void usart_mode_loop(void) {
 
 	case 55 : // TEST  
 	  
-	  READ_ARGUMENT_FROM_DATABUS(databus); 
+	  serial_ready;
+	  databus = serial_main_loop_read(); 
+	  serial_busy;	  
+	  z80_run; 
+
+	  // READ_ARGUMENT_FROM_DATABUS(databus); 
 	  DATA_TO_CPC(databus);  
 	  
 	  break; 
