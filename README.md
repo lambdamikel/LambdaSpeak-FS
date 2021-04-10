@@ -79,6 +79,112 @@ and fourth PCM smoothing delta (from 0 to 127).
 the exit check is not performed, hence resulting in highest PCM sample quality possible, 
 as the CPC databus is sampled with highest frequency. 
 
+## Serial Mode 
+
+Some changes here over the LambdaSpeak 3 version. 
+
+The serial mode uses a (ring or serial) buffer for buffering incoming
+serial messages (bytes received over RX). By default, the buffer is
+configured as a ring buffer, i.e., it starts again at 0 if it
+overflows. Two pointers are used: a read cursor, and an input / fill
+pointer. Both start at 0. If the read cursor is smaller than the input
+pointer, then a byte is available. Bytes can be read from the buffer
+until the pointers are equal again. 
+
+There are two different transmission modes. The default should be the
+*direct mode*. In this mode, every byte sent from the CPC to `&FBEE`
+is output directly to the UART (TX). This mode can be used for full-duplex
+communication, i.e., the ring buffer is being used for buffering incoming
+serial bytes, and the output is not buffered, but output directly to the 
+serial port. However, there is also the *buffered mode*, in which *output*
+is not sent directly to the serial port. Rather, it is first put into 
+the buffer, and upon a *flush buffer* command, the whole buffer is 
+sent at once over the serial output (TX) port. Note that this mode
+only allows *half-duplex*, since the input and output buffer is shared. 
+This mode should be rarely needed, but it may result in higher serial 
+transmission rates, because there is no delay in between sending serial 
+bytes caused by the protocol or the CPC having to dispatch the bytes
+to the interface. 
+
+To control the UART / serial interface, sequences of control bytes are used,
+and a control sequence starts with `255` / `&FF`. `255` can be be `escaped`
+by sending `255` and then `255` again (so, to transmit `255` as a content
+byte, send `255` twice).
+
+The listener / command processing loop uses the READY byte 16 on the
+IO port `&FBEE` to indicate that it is ready to receive the next
+command or byte (note though, that the sub-mode 10 and 50 listeners do
+not use the ready byte, see below). The byte 0 indicates that
+LambdaSpeak 3 is busy.
+
+The following table lists the command bytes in Serial Mode:
+
+-------------------------------------------------------------------------------------------------------
+| Byte Sequence   | Explanation                                   | Note                              |
+|-----------------|-----------------------------------------------|-----------------------------------|
+| 0...&FE         | Send Byte 0...254                             | Either buffered or TX directly    |
+| &FF, &FF        | Send Byte 255                                 | Either buffered or TX directly    |
+| &FF, 1, x       | Read x from bus and TX x                      | Transmit x directly to TX         |
+| &FF, 2          | Send buffer to TX                             | Flush buffer, max 256 + 268 bytes |
+| &FF, 3          | Get low byte number of bytes in input buffer  | Check if bytes have been received | 
+| &FF, 4          | Get high byte number of bytes in input buffer | Check if bytes have been received | 
+| &FF, 5          | Check if send/receive buffer is full          | 1 if full, 0 otherwise            | 
+| &FF, 6          | Reset read and input cursors                  | Sets input & read cursors to 0    | 
+| &FF, 7          | Check if another byte can be read from buffer | 1 if read cursor < input cursor   | 
+| &FF, 8          | Get byte from buffer at read cursor position  | Byte will appear on databus       | 
+| &FF, 9          | Get byte at read cursor position, inc. cursor | Read receive buffer byte by byte  | 
+| &FF, 10         | SERIAL MONITOR SUB MODE FOR RX / SERIAL IN    | For example, realtime MIDI IN     |         
+| &FF, 11, lo, hi | Set read cursor to position hi*256 + lo       | Use &FF, 8 to read byte at pos    | 
+| &FF, 12         | Set read cursor to 0                          | Does not erase the buffer         |  
+| &FF, 13         | Set read cursor to input cursor position -1   | Read cursor points to last byte   | 
+| &FF, 14         | Get mode - direct or buffered mode            | 1 = direct mode, 0 = buffered     | 
+| &FF, 15         | Speak mode (BAUD, Width, Parity, Stop Bits)   | Confirmations need to be enabled  | 
+| &FF, 16         | Direct mode on                                | No CPC input buffering, direct TX | 
+| &FF, 17         | Direct mode off                               | Buffer CPC input, then &FF, 2     | 
+| &FF, 20         | Quit and reset Serial Mode                    | Like Reset Button                 | 
+| &FF, 30, baud   | Set BAUD rate: baud = 0..15, see Baud Table   | Default 9600 (baud = 2, or > 15)  |   
+| &FF, 31, width  | Set word width: width = 5...8                 | Default 8 bits                    | 
+| &FF, 32, par.   | Set parity: 0, 1, 2                           | 0=No (Default), 1=Odd, 2=Even     | 
+| &FF, 33, stop   | Set number of stop bits: 1, 2                 | 1 = Default                       | 
+| &FF, 50         | SERIAL MONITOR SUB MODE RX AND TX (SERIAL IO) | For example, realtime MIDI IN/OUT |         
+| &FF, 60         | Use Ring Buffer for Receiver (Default)        | Wrap around on overflow (Default) |         
+| &FF, 70         | Use Linear Buffer for Receiver                | Stop on overflow (Default)        |         
+| &FF, &C3        | Speak Current Mode Info                       | Same &C3 as in speech modes       | 
+| &FF, &F2        | Get Mode Descriptor Byte                      | Same &F2 as in speech modes       | 
+-------------------------------------------------------------------------------------------------------
+
+Sub-modes 10 and 50 are meant for real-time serial (especially, MIDI)
+*streaming*. Sub-mode 10 for MIDI IN input only (but echoes incoming
+MIDI bytes automatically to TX = MIDI THROUGH), whereas sub-mode 50
+works in both directions -- input and output (full duplex; MIDI IN /
+MIDI OUT).
+
+The **protocol for sub-mode 10** works as follows, and is identical to
+the one for LambdaSpeak 3. To enter sub-mode 10, enter the serial
+mode, select MIDI setting baud rates (8N1 and 31250 BAUD), and then
+enter the mode via `OUT &FBEE,255: OUT &FBEE,10`. Then, the sub-mode
+10 listener loop becomes active, and proceeds as described in the
+LambdaSpeak 3 documentation.
+
+The **protocol for sub-mode 50** is a bit more involved, as it
+requires bi-directional communication. The protocol **is different
+from the one currently implemented in LambdaSpeak 3**.  To enter
+sub-mode 50, enter the serial mode, select MIDI setting baud rates
+(8N1 and 31250 BAUD), and then enter the mode via `OUT &FBEE,255: OUT
+&FBEE,50`. Then, the sub-mode 50 listener loop becomes active, and
+proceeds as follows: 
+
+1. LSFS listens to port `&FBEE` for incoming <byte>s. There are 4 commands: 
+   - if `<byte> = 1`, then the next byte that is being sent from the CPC (to `&FBEE`) is forwarded to the serial interfact (i.e., is output over the TX line). Hence, to send byte `<byte>`, use `OUT &FBEE,3:OUT &FBEE,<byte>`. 
+   - if `<byte> = 2`, then LSFS puts `1` or `0` on the databus, depending on whether a serial byte is available in the serial receive (ring) buffer. The result (`1` or `0`) appears on the databus until the next byte is sent from the CPC. 
+   - if `<byte> = 3`, and a byte was available in the receive buffer, then LSFS first puts the lower nibble of this byte onto the databus. In order to distinguish the payload from the `0, 1` bytes, the nibble is shifted for bit positions to the left, and the 4 lower bits are set to one: `<serial byte> & 0b00001111 ) << 4 | 0b00001111`.  Hence, the smallest value will be `15`, encoding a `0` lower nibble. To retrieve the **higher nibble** of the byte from the serial input buffer, the `3` command has to be sent  a second time. This time, the higher nibble is put on the databus, and again, to ensure that no `0, 1` can occur (or other synchronization bytes), the lower 4 bits are set to one: ` ( <serial byte> & 0b11110000 ) | 0b00001111`.  But the lower and the higher nibble can be read from the databus until the next command byte is sent from the CPC. 
+   - if `<byte> = 5`, then sub-mode 50 is exited, and LSFS returns to the main listener loop (not the serial listener loop). 
+
+The sub-mode 10 and sub-mode 50 protocols are best understood by
+looking at the provided MAXAM examplary assembler programs on the
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk; see `MODE10.BAS` and
+`MODE50.BAS`.
+
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
 ## Bill of Material
