@@ -27,7 +27,7 @@
 
 //
 // LambdaSpeak FS
-// Version 8
+// Version 9
 // License: GPL 3 
 // 
 // (C) 2021 Michael Wessel 
@@ -94,7 +94,7 @@ void delay_us(unsigned int microseconds)
 
 // #define BOOTMESSAGE
  
-#define VERSION 8
+#define VERSION 9
 
 #include "HAL9000_defines.h"    
 
@@ -3180,32 +3180,39 @@ uint8_t serial_main_loop_read(void) {
   uint8_t databus = 0; 
   
   z80_run;   
-
+ 
   do {
 
     // buffer received bytes: 
 
     if (SERIAL_BYTE_AVAILABLE) {
+
       z80_halt; // make sure we are not missing the IO WRITE request!
+      SERIAL_BYTE_AVAILABLE = 0; 
       READY_ON; 
 
-      SERIAL_BYTE_AVAILABLE = 0; 
-      
-      if (usart_input_buffer_index < SEND_BUFFER_SIZE) 
-	send_msg[usart_input_buffer_index] = SERIAL_BYTE_RECEIVED; 
-      else 
-	buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = SERIAL_BYTE_RECEIVED;   
-	  
-      if (usart_input_buffer_index == (TOTAL_BUFFER_SIZE-1)) {
-	if ( usart_ring_buffer) {
-	  // wrap around, buffer full 
-	  usart_input_buffer_index = 0;       
-	  bytes_available++;     
-	} 
-      } else {
+      if (! ( ( usart_ring_buffer && 
+		((( cpc_read_cursor == 0 ) && ( usart_input_buffer_index == ( TOTAL_BUFFER_SIZE - 1)))
+		 ||  
+		 ( cpc_read_cursor == ( usart_input_buffer_index + 1))))
+	      || 
+	      usart_input_buffer_index == TOTAL_BUFFER_SIZE )) {
+
+	if (usart_input_buffer_index < SEND_BUFFER_SIZE) 
+	  send_msg[usart_input_buffer_index] = SERIAL_BYTE_RECEIVED; 
+	else 
+	  buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = SERIAL_BYTE_RECEIVED;   
+
+	// a byte was put into the buffer
 	usart_input_buffer_index++;    
 	bytes_available++;     
-      } 
+
+	if (usart_input_buffer_index == TOTAL_BUFFER_SIZE) {
+	  if ( usart_ring_buffer) 
+	      // wrap around, buffer full 
+	      usart_input_buffer_index = 0;       	  
+	}
+      }     
       z80_run; 
     }
 
@@ -3501,12 +3508,12 @@ void usart_mode_loop(void) {
 	  SEND_TO_CPC_DATABUS( delta ); 
 
   	  } 	
-	  
+	   
 	  break; 
 	  
 	case 5 : // ask if buffer is full 
 
-	  SEND_TO_CPC_DATABUS(usart_input_buffer_index == TOTAL_BUFFER_SIZE); 
+	  SEND_TO_CPC_DATABUS(bytes_available == TOTAL_BUFFER_SIZE); 
 
 	  break; 
 
