@@ -3249,6 +3249,7 @@ void usart_mode_loop(void) {
   usart_input_buffer_index = 0; 
   from_cpc_input_buffer_index = 0; 
   cpc_read_cursor = 0; 
+  bytes_available = 0; 
  
   z80_run; 
   sei(); 
@@ -3520,7 +3521,9 @@ void usart_mode_loop(void) {
 	case 6 : // flush receive buffer 
 
 	  usart_input_buffer_index = 0; 
+	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
 
 	  break; 
 	  
@@ -3648,12 +3651,21 @@ void usart_mode_loop(void) {
 
 	  direct_mode = 1;  
 
+	  usart_input_buffer_index = 0; 
+	  from_cpc_input_buffer_index = 0; 
+	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
+
 	  break; 
 
 	case 17 :  // turn off databus direct printing  -> print to buffer! 
 
+	  direct_mode = 0;  
+
+	  usart_input_buffer_index = 0; 
 	  from_cpc_input_buffer_index = 0; 
-	  direct_mode = 0; 
+	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
 
 	  break; 
 
@@ -3760,16 +3772,22 @@ void usart_mode_loop(void) {
 	case 60 : // turn on wrap around 
 
 	  usart_ring_buffer = 1; 
+
 	  usart_input_buffer_index = 0; 
+	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
 
 	  break; 
 
 	case 70 : // turn off wrap around 
 
 	  usart_ring_buffer = 0; 
+
 	  usart_input_buffer_index = 0; 
+	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
 
 	  break; 
 

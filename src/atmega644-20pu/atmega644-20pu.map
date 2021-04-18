@@ -238,7 +238,7 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0xf3d6
+.text           0x00000000     0xf436
  *(.vectors)
  .vectors       0x00000000       0x7c c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm644p.o
                 0x00000000                __vectors
@@ -650,56 +650,56 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x0000d918       0x5a lambdaspeak.o
                 0x0000d918                speech_ready_message
  .text.usart_mode_loop
-                0x0000d972      0xc18 lambdaspeak.o
+                0x0000d972      0xc78 lambdaspeak.o
                 0x0000d972                usart_mode_loop
  .text.speak_buffer
-                0x0000e58a      0x182 lambdaspeak.o
-                0x0000e58a                speak_buffer
+                0x0000e5ea      0x182 lambdaspeak.o
+                0x0000e5ea                speak_buffer
  .text.flush_command
-                0x0000e70c       0x1a lambdaspeak.o
-                0x0000e70c                flush_command
+                0x0000e76c       0x1a lambdaspeak.o
+                0x0000e76c                flush_command
  .text.process_control
-                0x0000e726      0x1ea lambdaspeak.o
-                0x0000e726                process_control
- .text.main     0x0000e910      0x40e lambdaspeak.o
-                0x0000e910                main
+                0x0000e786      0x1ea lambdaspeak.o
+                0x0000e786                process_control
+ .text.main     0x0000e970      0x40e lambdaspeak.o
+                0x0000e970                main
  .text.__vector_16
-                0x0000ed1e       0x9e lambdaspeak.o
-                0x0000ed1e                __vector_16
- .text.libgcc   0x0000edbc       0x18 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
-                0x0000edbc                __udivmodqi4
- .text.libgcc   0x0000edd4       0x26 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
-                0x0000edd4                __divmodhi4
-                0x0000edd4                _div
- .text.libgcc   0x0000edfa       0x28 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                0x0000edfa                __udivmodhi4
+                0x0000ed7e       0x9e lambdaspeak.o
+                0x0000ed7e                __vector_16
+ .text.libgcc   0x0000ee1c       0x18 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodqi4.o)
+                0x0000ee1c                __udivmodqi4
+ .text.libgcc   0x0000ee34       0x26 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+                0x0000ee34                __divmodhi4
+                0x0000ee34                _div
+ .text.libgcc   0x0000ee5a       0x28 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                0x0000ee5a                __udivmodhi4
  .text.avr-libc
-                0x0000ee22       0x48 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
-                0x0000ee22                sprintf
+                0x0000ee82       0x48 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(sprintf.o)
+                0x0000ee82                sprintf
  .text.avr-libc
-                0x0000ee6a      0x3ba c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
-                0x0000ee6a                vfprintf
+                0x0000eeca      0x3ba c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+                0x0000eeca                vfprintf
  .text.avr-libc
-                0x0000f224       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
-                0x0000f224                strnlen_P
+                0x0000f284       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+                0x0000f284                strnlen_P
  .text.avr-libc
-                0x0000f23a       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
-                0x0000f23a                strnlen
+                0x0000f29a       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strnlen.o)
+                0x0000f29a                strnlen
  .text.avr-libc
-                0x0000f250       0x58 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
-                0x0000f250                fputc
+                0x0000f2b0       0x58 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(fputc.o)
+                0x0000f2b0                fputc
  .text.avr-libc
-                0x0000f2a8       0xbc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
-                0x0000f2a8                __ultoa_invert
- .text.libgcc   0x0000f364       0x38 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
-                0x0000f364                __prologue_saves__
- .text.libgcc   0x0000f39c       0x36 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
-                0x0000f39c                __epilogue_restores__
-                0x0000f3d2                . = ALIGN (0x2)
+                0x0000f308       0xbc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+                0x0000f308                __ultoa_invert
+ .text.libgcc   0x0000f3c4       0x38 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+                0x0000f3c4                __prologue_saves__
+ .text.libgcc   0x0000f3fc       0x36 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+                0x0000f3fc                __epilogue_restores__
+                0x0000f432                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000f3d2        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x0000f3d2                exit
-                0x0000f3d2                _exit
+ .fini9         0x0000f432        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x0000f432                exit
+                0x0000f432                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -718,11 +718,11 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000f3d2        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x0000f432        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000f3d6                _etext = .
+                0x0000f436                _etext = .
 
-.data           0x00800100      0xa6c load address 0x0000f3d6
+.data           0x00800100      0xa6c load address 0x0000f436
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100      0xa47 lambdaspeak.o
@@ -788,11 +788,11 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00800c76        0x2 lambdaspeak.o
  .bss.cpc_read_cursor
                 0x00800c78        0x2 lambdaspeak.o
- .bss.send_msg  0x00800c7a      0x10c lambdaspeak.o
- .bss.databus1  0x00800d86        0x1 lambdaspeak.o
- .bss.databus2  0x00800d87        0x1 lambdaspeak.o
  .bss.bytes_available
-                0x00800d88        0x2 lambdaspeak.o
+                0x00800c7a        0x2 lambdaspeak.o
+ .bss.send_msg  0x00800c7c      0x10c lambdaspeak.o
+ .bss.databus1  0x00800d88        0x1 lambdaspeak.o
+ .bss.databus2  0x00800d89        0x1 lambdaspeak.o
  .bss.byte_avail
                 0x00800d8a        0x1 lambdaspeak.o
  .bss.FAST_CPC_GETTERS
@@ -850,8 +850,8 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .bss.allo_map  0x00800e7e       0x80 lambdaspeak.o
  *(COMMON)
                 0x00800efe                PROVIDE (__bss_end, .)
-                0x0000f3d6                __data_load_start = LOADADDR (.data)
-                0x0000fe42                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000f436                __data_load_start = LOADADDR (.data)
+                0x0000fea2                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800efe        0x0
                 0x00800efe                PROVIDE (__noinit_start, .)
@@ -929,9 +929,9 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x320 lambdaspeak.o
 
-.debug_line     0x00000000     0x46b4
+.debug_line     0x00000000     0x470c
  *(.debug_line)
- .debug_line    0x00000000     0x46b4 lambdaspeak.o
+ .debug_line    0x00000000     0x470c lambdaspeak.o
 
 .debug_frame    0x00000000      0x880
  *(.debug_frame)
