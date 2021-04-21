@@ -3503,7 +3503,7 @@ void usart_mode_loop(void) {
 	  
 	case 5 : // ask if buffer is full 
 
-	  SEND_TO_CPC_DATABUS(bytes_available == TOTAL_BUFFER_SIZE); 
+	  SEND_TO_CPC_DATABUS(bytes_available == (TOTAL_BUFFER_SIZE -1)); 
 
 	  break; 
 
