@@ -83,13 +83,12 @@ as the CPC databus is sampled with highest frequency.
 
 Some changes here over the LambdaSpeak 3 version. 
 
-The serial mode uses a (ring or serial) buffer for buffering incoming
-serial messages (bytes received over RX). By default, the buffer is
-configured as a ring buffer, i.e., it starts again at 0 if it
-overflows. Two pointers are used: a read cursor, and an input / fill
-pointer. Both start at 0. If the read cursor is smaller than the input
-pointer, then a byte is available. Bytes can be read from the buffer
-until the pointers are equal again. 
+The serial mode uses a ring buffer for buffering incoming serial
+messages (bytes received over RX). The buffer pointer starts again at
+0 if it overflows. Two pointers are used: a read cursor, and an input
+/ fill pointer. Both start at 0. If the read cursor is smaller than
+the input pointer, then a byte is available. Bytes can be read from
+the buffer until the pointers are equal again.
 
 There are two different transmission modes. The default should be the
 *direct mode*. In this mode, every byte sent from the CPC to `&FBEE`
@@ -147,8 +146,6 @@ The following table lists the command bytes in Serial Mode:
 | &FF, 32, par.   | Set parity: 0, 1, 2                           | 0=No (Default), 1=Odd, 2=Even     | 
 | &FF, 33, stop   | Set number of stop bits: 1, 2                 | 1 = Default                       | 
 | &FF, 50         | SERIAL MONITOR SUB MODE RX AND TX (SERIAL IO) | For example, realtime MIDI IN/OUT |         
-| &FF, 60         | Use Ring Buffer for Receiver (Default)        | Wrap around on overflow (Default) |         
-| &FF, 70         | Use Linear Buffer for Receiver                | Stop on overflow (Default)        |         
 | &FF, &C3        | Speak Current Mode Info                       | Same &C3 as in speech modes       | 
 | &FF, &F2        | Get Mode Descriptor Byte                      | Same &F2 as in speech modes       | 
 -------------------------------------------------------------------------------------------------------

@@ -162,7 +162,6 @@ static char send_msg[SEND_BUFFER_SIZE] = { 0 };
 //
 //
 
-static volatile uint8_t usart_ring_buffer = 0; 
 static volatile uint16_t usart_input_buffer_index = 0; // receive input from USART
 
 static volatile uint16_t from_cpc_input_buffer_index = 0;  // input from CPC to send to USART
@@ -3191,12 +3190,9 @@ uint8_t serial_main_loop_read(void) {
       SERIAL_BYTE_AVAILABLE = 0; 
       READY_ON; 
 
-      if (! ( ( usart_ring_buffer && 
-		((( cpc_read_cursor == 0 ) && ( usart_input_buffer_index == ( TOTAL_BUFFER_SIZE - 1)))
-		 ||  
-		 ( cpc_read_cursor == ( usart_input_buffer_index + 1))))
-	      || 
-	      usart_input_buffer_index == TOTAL_BUFFER_SIZE )) {
+      if (! ( (( cpc_read_cursor == 0 ) && ( usart_input_buffer_index == ( TOTAL_BUFFER_SIZE - 1)))
+	      ||  
+	      ( cpc_read_cursor == ( usart_input_buffer_index + 1)))) { 
 
 	if (usart_input_buffer_index < SEND_BUFFER_SIZE) 
 	  send_msg[usart_input_buffer_index] = SERIAL_BYTE_RECEIVED; 
@@ -3208,9 +3204,8 @@ uint8_t serial_main_loop_read(void) {
 	bytes_available++;     
 
 	if (usart_input_buffer_index == TOTAL_BUFFER_SIZE) {
-	  if ( usart_ring_buffer) 
-	      // wrap around, buffer full 
-	      usart_input_buffer_index = 0;       	  
+	  // wrap around, buffer full 
+	  usart_input_buffer_index = 0;       	  
 	}
       }     
       z80_run; 
@@ -3238,8 +3233,6 @@ void usart_mode_loop(void) {
 
   uint8_t direct_mode = 0;  
   
-  usart_ring_buffer = 1; 
-
   serial_busy;  
 
   LEDS_OFF; 
@@ -3320,8 +3313,6 @@ void usart_mode_loop(void) {
 
 	case 10 : // USART MONITOR OLD - CANNOT TAKE COMMANDS FROM CPC - OBSOLETE FOR NOW!
 
-	  usart_ring_buffer = 1;  // wrap around! 
-
 	  usart_input_buffer_index = 0; 
 	  SERIAL_ON; 
 
@@ -3375,8 +3366,6 @@ void usart_mode_loop(void) {
 	  break;
 
 	case 50 : // USART MONITOR NEW - WITH COMMANDS FROM CPC 
-
-	  usart_ring_buffer = 1;  // wrap around! 
 
 	  usart_input_buffer_index = 0; 
 	  cpc_read_cursor = 0;  
@@ -3579,7 +3568,7 @@ void usart_mode_loop(void) {
 	    }
 	  }
 
-	  if (cpc_read_cursor == TOTAL_BUFFER_SIZE && usart_ring_buffer) {
+	  if (cpc_read_cursor == TOTAL_BUFFER_SIZE ) {
 	    // wrap around
 	    cpc_read_cursor = 0;       
 	  }
@@ -3642,7 +3631,10 @@ void usart_mode_loop(void) {
 	  command_confirm(command_string); 
 	  
 	  usart_input_buffer_index = 0; 
+	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
+	  bytes_available = 0; 
+
 	  SERIAL_ON; 
 
 	  break; 
@@ -3767,28 +3759,6 @@ void usart_mode_loop(void) {
 	  // READ_ARGUMENT_FROM_DATABUS(databus); 
 	  DATA_TO_CPC(databus);  
 	  
-	  break; 
-
-	case 60 : // turn on wrap around 
-
-	  usart_ring_buffer = 1; 
-
-	  usart_input_buffer_index = 0; 
-	  from_cpc_input_buffer_index = 0; 
-	  cpc_read_cursor = 0; 
-	  bytes_available = 0; 
-
-	  break; 
-
-	case 70 : // turn off wrap around 
-
-	  usart_ring_buffer = 0; 
-
-	  usart_input_buffer_index = 0; 
-	  from_cpc_input_buffer_index = 0; 
-	  cpc_read_cursor = 0; 
-	  bytes_available = 0; 
-
 	  break; 
 
 	case 0xF2 : get_full_mode(); break; 
