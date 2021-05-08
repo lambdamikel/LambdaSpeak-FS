@@ -3277,14 +3277,14 @@ uint8_t serial_main_loop_read(void) {
   z80_run;   
  
   loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
-  cli(); 
+  //cli(); 
   
   loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
   z80_halt;   
 
   DATA_FROM_CPC(databus); 
   READY_OFF;  
-  sei(); 
+  //sei(); 
 
   return databus; 
 
