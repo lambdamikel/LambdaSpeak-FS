@@ -64,6 +64,8 @@ https://global.epson.com/products_and_drivers/semicon/products/speech/voice/sla/
 // static volatile uint8_t FAST_GETTER_DELAY_US = 150; 
 // static volatile uint8_t SLOW_GETTER_DELAY_MS = 10; 
 
+#define ALTERNATIVE_USART_ISR 
+
 static inline void delay_us(unsigned int microseconds) __attribute__((always_inline));
 void delay_us(unsigned int microseconds)
 {
@@ -3028,6 +3030,7 @@ void usart_tx_off(void) {
 // RX ISR Receive / Buffered
 //
 
+#ifndef ALTERNATIVE_USART_ISR 
 ISR(USART0_RX_vect) {  
 
   SERIAL_BYTE_RECEIVED = UDR0; 
@@ -3043,6 +3046,40 @@ ISR(USART0_RX_vect) {
   }
 
 }
+#endif 
+
+#ifdef ALTERNATIVE_USART_ISR 
+ISR(USART0_RX_vect) {  
+
+  SERIAL_BYTE_RECEIVED = UDR0; 
+
+      z80_halt; // make sure we are not missing the IO WRITE request!
+      READY_ON; 
+
+      if (! ( (( cpc_read_cursor == 0 ) && ( usart_input_buffer_index == ( TOTAL_BUFFER_SIZE - 1)))
+	      ||  
+	      ( cpc_read_cursor == ( usart_input_buffer_index + 1)))) { 
+
+	if (usart_input_buffer_index < SEND_BUFFER_SIZE) 
+	  send_msg[usart_input_buffer_index] = SERIAL_BYTE_RECEIVED; 
+	else 
+	  buffer[usart_input_buffer_index - SEND_BUFFER_SIZE] = SERIAL_BYTE_RECEIVED;   
+
+	// a byte was put into the buffer
+	usart_input_buffer_index++;    
+	bytes_available++;     
+
+	if (usart_input_buffer_index == TOTAL_BUFFER_SIZE) {
+	  // wrap around, buffer full 
+	  usart_input_buffer_index = 0;       	  
+	}
+      }
+      z80_run; 
+}
+
+#endif 
+
+
  
 //
 // TX Transmit
@@ -3173,6 +3210,7 @@ void disable_iowrite_isr(void) {
 //
 // 
 
+#ifndef ALTERNATIVE_USART_ISR 
 uint8_t serial_main_loop_read(void) {
 
   // LOCAL !! 
@@ -3228,6 +3266,35 @@ uint8_t serial_main_loop_read(void) {
   } while (1); 
 
 }
+#endif
+
+#ifdef ALTERNATIVE_USART_ISR 
+uint8_t serial_main_loop_read(void) {
+
+  // LOCAL !! 
+  uint8_t databus = 0; 
+  
+  z80_run;   
+ 
+  loop_until_bit_is_set(IOREQ_PIN, IOREQ_WRITE); 
+  cli(); 
+  
+  loop_until_bit_is_clear(IOREQ_PIN, IOREQ_WRITE); 
+  z80_halt;   
+
+  DATA_FROM_CPC(databus); 
+  READY_OFF;  
+  sei(); 
+
+  return databus; 
+
+}
+#endif
+
+
+//
+//
+//
 
 void usart_mode_loop(void) {
 
