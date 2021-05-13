@@ -197,7 +197,17 @@ the synchronization / rendezvous point first, there is no problem - it
 will halt execution to wait for the CPC's clock signal, and hence will
 wait for the "CPC to catch up".
 
-Note that, even if the CPC gives the clock signal a bit *too early*
+Note that ISR UART interrupts caused by incoming serial bytes might
+still be hapening WHILE the firmware is waiting for the CPC clock
+signal at the synchronization point. However, the UART ISR halts
+and resumes the Z80 CPC CPU, hence, these interupts are invisible from
+a CPC "clock" point of view. Also, if the CPC should give the clock
+signal WHILST serving the UART ISR, it will still be noticed, since
+the IOWRITE Request caused by the CPC clock signal is processed by
+another ISR (triggering on a IO Write Request pin change signal). 
+
+
+Also note that, even if the CPC gives the clock signal a bit *too early*
 (i.e., the ATmega firmware has not reached the synchronization point
 yet), it *may still continue correctly,* as the IO Write Request
 issued by the CPC (for the clock signal) will not go unnoticed: a pin
