@@ -167,8 +167,10 @@ static char send_msg[SEND_BUFFER_SIZE] = { 0 };
 
 static volatile uint8_t usart_input_buffer_index = 0; // receive input from USART
 
-static volatile uint8_t from_cpc_input_buffer_index = 0;  // input from CPC to send to USART
 static volatile uint8_t cpc_read_cursor = 0;  // reading USART received buffer from CPC 
+
+// this is one is really 16 bit: 
+static volatile uint16_t from_cpc_input_buffer_index = 0;  // input from CPC to send to USART
 
 
 //
@@ -3073,32 +3075,19 @@ void USART_Transmit1( unsigned char data ){
 
  } 
 
-void USART_Transmit( unsigned char data ){
-
-  usart_input_buffer_index = 0; 
-  cpc_read_cursor = 0;
-  USART_Transmit1(data); 
-  // while ( !( UCSR0A & (1<<TXC0)) ) {  }; 
-
-} 
 
 void USART_sendBuffer(uint16_t length) {
-  
-  usart_input_buffer_index = 0; 
-  cpc_read_cursor = 0;
+
+  from_cpc_input_buffer_index = 0; 
 
   // READY_OFF;   
   // TRANSMIT_ON_ONLY; 
   // TRANSMIT_ON; 
-
   // usart_tx_on(); 
 
-  for (int i = 0; i < length; i++) {
-    // while ( !( UCSR0A & (1<<UDRE0)) ) { if (bit_is_set(IOREQ_PIN, IOREQ_WRITE)) return; }  
+  for (uint8_t i = 0; i < length; i++) {
     while ( !( UCSR0A & (1<<UDRE0)) ) { }; 
-    if (i < SPEECH_BUFFER_SIZE) {
-      UDR0 = buffer[i]; 
-    }
+    UDR0 = send_msg[i];   
   }
 
   //while ( !( UCSR0A & (1<<TXC0)) ) {  }; 
@@ -3169,10 +3158,11 @@ void usart_mode_loop(void) {
 	  USART_Transmit1(databus); 
 	} else {
 
-	  if (from_cpc_input_buffer_index < SPEECH_BUFFER_SIZE) {
-	    buffer[ from_cpc_input_buffer_index ] = databus; 
+	  if (from_cpc_input_buffer_index < (SEND_BUFFER_SIZE-1)) {
+	    send_msg[ from_cpc_input_buffer_index ] = databus;  
+	    // max index is hence SEND_BUFFER_SIZE-1 - save to loop through the whole array
 	    from_cpc_input_buffer_index++;
-	  }
+	  }   
 	}
 	 
       } else {
@@ -3319,7 +3309,6 @@ void usart_mode_loop(void) {
 	case 2 :  // print buffer to serial 
 
 	  USART_sendBuffer(from_cpc_input_buffer_index); 
-	  from_cpc_input_buffer_index = 0; 
 
 	  break; 
 	  
@@ -3347,8 +3336,6 @@ void usart_mode_loop(void) {
 
 	case 6 : // flush receive buffer 
 
-	  usart_input_buffer_index = 0; 
-	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
 	  bytes_available = 0; 
 
@@ -3508,7 +3495,11 @@ void usart_mode_loop(void) {
 	  
 	  break; 
 
-	case 0xF2 : get_full_mode(); break; 
+	case 0xF2 :
+
+	  get_full_mode(); 
+
+	  break; 
 
 	case 0xC3 : 
 	  LAMBDA_EPSON_ON; 	  	    
@@ -3530,11 +3521,13 @@ void usart_mode_loop(void) {
 
       } else
 
-	if (from_cpc_input_buffer_index < SPEECH_BUFFER_SIZE) {
-	  buffer[ from_cpc_input_buffer_index ] = databus; 
-	}   
-      }   
-    }
+	if (from_cpc_input_buffer_index < (SEND_BUFFER_SIZE-1)) {
+	  send_msg[ from_cpc_input_buffer_index ] = databus;  
+	  // max index is hence SEND_BUFFER_SIZE-1 - save to loop through the whole array
+	  from_cpc_input_buffer_index++;
+	}   	
+    }   
+  }
 }
 
 
