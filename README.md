@@ -162,18 +162,35 @@ firmware moves on to the next stage in the protocol (i.e., presents
 the ready byte and waits for the next command / input byte), in the 
 `Handshake Getters` mode, the firmware leaves the return value on 
 the databus as long as the CPC requires it. The protocol then 
-advances by providing a "clock" signal from the CPC to the firmware, 
-after which the next state is reached. This "clock" signal is
-a simple `out &fbee,<any byte>` IO request (the presented byte doesn't
-matter). That way, the CPC has enough time to read the presented byte, 
-since the firmware is waiting for the CPC to catch up. In case
-the CPC should reach the synchronization point earlier, it only needs
-to wait a long enough time to be sure that the firmware will also have
-reached the rendevous / synchronization point. After the "clock" signal 
-has been given, the 2 protocols are in perfect synchronization again. 
-This `Handshake Getters` protocol is enabled using `&E2`. Hence, `&E2`
-should be enabled for high-speed streaming serial communication, before
-entering the serial mode via `&F1`. 
+advances at a CPC-controlled speed. The CPC advances 
+the protocol simply by providing a "clock" signal to the firmware, 
+which then transitions to the next state in the protocol. This "clock" signal is
+a simple `out &fbee,<any byte>` IO request (the actual `<any byte>` doesn't
+matter). Note that, ideally we would have used the `a = inp(&fbee)` 
+IO READ requests, but these are invisible to the ATmega MCU 
+(due to a hardware limitation) and hence, we can only use 
+IO WRITE requests (these trigger a Pin Transition ISR). 
+
+That way, the CPC now has "enough time" to read the query command
+return byte from the databus. The firmware is literally waiting for
+the CPC to "catch up", to reach the synchronization / rendevous point
+for the "relay race" between the two programs.
+
+In case the CPC should reach the synchronization point earlier that
+the ATmega firmware, it only needs to wait "long enough" to be sure
+that the firmware will also have reached the rendevous /
+synchronization point; e.g., a number of microseconds should be enough
+in most circumstances, even if the ISR UART routine is under heavy
+load by buffering incoming serial data. In case the ATmega firmware
+reached the synchronization / rendezvous point first, there is no
+problem, because it will halt execution to wait for the CPC's 
+clock signal. 
+
+After the clock signal has been given by the CPC, the 2 protocols are
+in perfect synchronization again.  This `Handshake Getters` protocol
+is enabled using `&E2`. Hence, `&E2` should be enabled for high-speed
+streaming serial communication, before entering the serial mode via
+`&F1`. 
 
 The `Handshake Getters` protocol for serial data realtime processing /
 serial data streaming is illustrated in program `SERREC11.BAS` on the
