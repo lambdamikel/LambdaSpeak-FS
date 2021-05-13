@@ -33,8 +33,8 @@
 // 
 
 #define _Z80_READY PB1 
-#define z80_run  DDRB = 0b11111100 
-#define z80_halt DDRB = 0b11111110, clearBit(PORTB, _Z80_READY) 
+#define z80_run  { DDRB = 0b11111100; }
+#define z80_halt { DDRB = 0b11111110; clearBit(PORTB, _Z80_READY); } 
 
 //
 // CPC Databus IO 
@@ -60,7 +60,9 @@
 
 // static volatile uint8_t synchro = 0; 
 
-#define DATA_TO_CPC(arg)    { TO_CPC_2to7 = ( ( 0b11111100 & arg ) | ( TO_CPC_2to7 & 0b00000011)); TO_CPC_0to1 = ( ( ( 0b00000011 & arg ) << 4 ) | ( TO_CPC_0to1 & 0b11001111 )); }
+
+#define DATA_TO_CPC(arg)    {  TO_CPC_2to7 = ( ( 0b11111100 & arg ) | ( TO_CPC_2to7 & 0b00000011)); TO_CPC_0to1 = ( ( ( 0b00000011 & arg ) << 4 ) | ( TO_CPC_0to1 & 0b11001111 ));  }
+
 #define DATA_FROM_CPC(arg)  arg = FROM_CPC 
 
 //
