@@ -199,12 +199,14 @@ wait for the "CPC to catch up".
 
 Note that ISR UART interrupts caused by incoming serial bytes might
 still be hapening WHILE the firmware is waiting for the CPC clock
-signal at the synchronization point. However, the UART ISR halts
-and resumes the Z80 CPC CPU, hence, these interupts are invisible from
-a CPC "clock" point of view. Also, if the CPC should give the clock
-signal WHILST serving the UART ISR, it will still be noticed, since
-the IOWRITE Request caused by the CPC clock signal is processed by
-another ISR (triggering on a IO Write Request pin change signal). 
+signal at the synchronization point. However, the UART ISR halts and
+resumes the Z80 CPC CPU, hence, these interupts are invisible from a
+CPC "clock" point of view. Also, if the CPC should have given the
+clock signal at the same point the UART ISR is engaged (this CAN
+happen), it will still get noticed by the firmware, since the IOWRITE
+Request from the CPC clock signal is processed by another ISR,
+triggering on a IO Write Request pin change signal and hence we cannot
+miss any IO WRite Requests from the CPC. 
 
 
 Also note that, even if the CPC gives the clock signal a bit *too early*
