@@ -162,34 +162,34 @@ are used to indicate protocol state / position) *works for slower serial byte ra
 causes *synchronization failures and hence data loss at higher
 data rates.* 
 
-*Our solution to this problem is the `Handshake Getters` protocol.*
-Rather than presenting the return value for a certain period of time
-on the databus, after which the firmware moves on to the next state in
-the protocol (i.e., presents the ready byte and waits for the next
-command / input byte), using the `Handshake Getters` protocol mode,
-the firmware *leaves the return value on the databus as long as the
-CPC requires it.* The protocol then *advances at a CPC-controlled
-speed*, rather than at a firmware delay-time controlled speed (to
-which the CPC might have a hard time to synchronize). Hence, the CPC
-advances the protocol simply by providing a "clock" signal to the
-ATmega firmware, which then transitions to the next state in the
-protocol. This "clock" signal is a simple `out &fbee,<any byte>` IO
-Write Request. Note that the actual `<any byte>` doesn't
-matter. Ideally, we should have used the `a = inp(&fbee)` IO Read
-Request, but these are invisible to the ATmega MCU, due to a hardware
-limitation. Hence, we can only use the IO Write Requests for
-synchronization (these trigger a pin change ISR). 
+*Our solution to this problem is the new `Handshake Getters`
+protocol.* Rather than presenting the return value for a certain
+period of time on the databus, after which the firmware moves on to
+the next state in the protocol (i.e., presents the ready byte and
+waits for the next command / input byte), by using this new `Handshake
+Getters` protocol mode instead, the firmware *leaves the return value
+on the databus as long as the CPC requires it.* The protocol then
+*advances at a CPC-controlled speed*, rather than at a firmware
+delay-time controlled speed (to which the CPC might have a hard time
+to synchronize). Hence, the CPC advances the protocol simply by
+providing a "clock" signal to the ATmega firmware, which then
+transitions to the next state in the protocol. This "clock" signal is
+a simple `out &fbee,<any byte>` IO Write Request. Note that the actual
+`<any byte>` doesn't matter. Ideally, we should have used the `a =
+inp(&fbee)` IO Read Request, but these are invisible to the ATmega
+MCU, due to a hardware limitation. Hence, we can only use the IO Write
+Requests for synchronization (these trigger a pin change ISR).
 
 That way, the CPC now has *enough time* to read the query command's
 return byte from the databus. The firmware is literally *waiting for
-the CPC to catch up*, to reach the synchronization / rendevous point,
+the CPC to catch up*, to reach the synchronization / rendezvous point,
 similar to a "relay race" between the two programs (CPC program and
 ATmega firmware).
 
 There are two cases: In case the CPC should reach the synchronization
 point *before* the ATmega firmware, it only *needs to wait long
 enough* to ensure that the firmware will also have reached the
-rendevous / synchronization point when the clock signal is given by
+rendezvous / synchronization point when the clock signal is given by
 the CPC. "Long enough" usually means a number of microseconds - even
 if the ISR UART routine is under heavy load by buffering incoming
 serial data at high baud rates. In case the ATmega firmware reaches
@@ -258,7 +258,7 @@ The routines `waitfor3` (`waitfor16`) scan the databus until `3`
 (`16`, resp.) are found. The number of `NOPs` in `.delay` is not
 important, but it cannot be too small - as explained, the `.delay` 
 routine needs to consume enough time, so that it is guranteed that the
-firmware has already reached the rendevous / synchronization point
+firmware has already reached the rendezvous / synchronization point
 when the CPC sends the clock signal. 
 
 For completeness, serial data realtime processing using the "Medium
