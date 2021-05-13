@@ -3336,6 +3336,7 @@ void usart_mode_loop(void) {
 
 	case 6 : // flush receive buffer 
 
+	  usart_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
 	  bytes_available = 0; 
 
@@ -3435,6 +3436,13 @@ void usart_mode_loop(void) {
 	  from_cpc_input_buffer_index = 0; 
 	  cpc_read_cursor = 0; 
 	  bytes_available = 0; 
+
+	  break; 
+
+	case 18 :  // get current cpc read cursor position 
+
+	  //z80_run; 
+	  SEND_TO_CPC_DATABUS(cpc_read_cursor); 
 
 	  break; 
 

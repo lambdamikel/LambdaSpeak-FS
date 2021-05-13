@@ -298,7 +298,7 @@ The following table lists the command bytes in Serial Mode:
 | &FF, 3          | Get low byte number of bytes in input buffer  | Check if bytes have been received | 
 | &FF, 4          | Get high byte number of bytes in input buffer | Check if bytes have been received | 
 | &FF, 5          | Check if send/receive buffer is full          | 1 if full, 0 otherwise            | 
-| &FF, 6          | Reset read and input cursors                  | Sets input & read cursors to 0    | 
+| &FF, 6          | Reset read and input cursors                  | Clears receive buffer and cursors | 
 | &FF, 7          | Check if another byte can be read from buffer | 1 if read cursor < input cursor   | 
 | &FF, 8          | Get byte from buffer at read cursor position  | Byte will appear on databus       | 
 | &FF, 9          | Get byte at read cursor position, inc. cursor | Read receive buffer byte by byte  | 
@@ -310,6 +310,7 @@ The following table lists the command bytes in Serial Mode:
 | &FF, 15         | Speak mode (BAUD, Width, Parity, Stop Bits)   | Confirmations need to be enabled  | 
 | &FF, 16         | Direct mode on                                | No CPC input buffering, direct TX | 
 | &FF, 17         | Direct mode off                               | Buffer CPC input, then &FF, 2     | 
+| &FF, 18         | Get current read cursor position              | Cur. read pos. in receive buffer  | 
 | &FF, 20         | Quit and reset Serial Mode                    | Like Reset Button                 | 
 | &FF, 30, baud   | Set BAUD rate: baud = 0..15, see Baud Table   | Default 9600 (baud = 2, or > 15)  |   
 | &FF, 31, width  | Set word width: width = 5...8                 | Default 8 bits                    | 
