@@ -176,15 +176,26 @@ return byte from the databus. The firmware is literally waiting for
 the CPC to "catch up", to reach the synchronization / rendevous point
 for the "relay race" between the two programs.
 
-In case the CPC should reach the synchronization point earlier that
+In case the CPC should reach the synchronization point earlier than
 the ATmega firmware, it only needs to wait "long enough" to be sure
 that the firmware will also have reached the rendevous /
 synchronization point; e.g., a number of microseconds should be enough
 in most circumstances, even if the ISR UART routine is under heavy
 load by buffering incoming serial data. In case the ATmega firmware
 reached the synchronization / rendezvous point first, there is no
-problem, because it will halt execution to wait for the CPC's 
-clock signal. 
+problem, because it will halt execution to wait for the CPC's clock
+signal. Note that, even if the CPC gives the clock signal too early
+(i.e., the ATmega firmware has not reached the synchronization point
+yet), it may still continue correctly, as the IO Write Request issued
+by the CPC for the clock signal will not be unnoticed (i.e., a pin
+change ISR will register the signal even if the firmware has not
+reached the synchronization point at where it is waiting for the
+signal; if the signal has been given slightly earlier, the firmware
+will simply proceed, and the protocols are still somewhat
+synchronized. However, it is strongly recommended to not clock the
+firmware "too fast", as it will again result in clock and hence
+protocol synchronization skews that will eventually result in phase
+shifts and hence data loss.)
 
 After the clock signal has been given by the CPC, the 2 protocols are
 in perfect synchronization again.  This `Handshake Getters` protocol
