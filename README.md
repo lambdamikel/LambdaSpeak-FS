@@ -108,16 +108,16 @@ possible.
 
 To control the UART / serial interface, sequences of control bytes are
 used, and a control sequence starts with `255` / `&FF`. `255` can be
-be `escaped` by sending `255` and then `255` again (so, to transmit
+be *escaped* by sending `255` and then `255` again (so, to transmit
 `255` as a content byte, send `255` twice).
 
 The listener / command processing loop uses the READY byte 16 on the
 IO port `&FBEE` to indicate that it is ready to receive the next
 command or byte. Commands start with `255`, followed by another byte
 to determine the command. After `255`, the READY byte indicator
-changes to 3. Using a different READY byte here (i.e., 3 instead of
-16) gives a clear indication of the current position in the
-communication protocol. 
+changes to 3. Using a different READY byte here (i.e., `3` instead of
+`16`) gives a clear indication of the current position in the
+communication protocol (or the *state* of the protocol).
 
 Also note that the sub-mode 10 and 50 listeners *do not use any 
 ready byte(s)*, see below. 
@@ -127,86 +127,100 @@ such as `255, 7` and `255, 9`. An intermittent (transient) value `4`
 indicates that LambdaSpeak is busy. The important command `255, 7`
 checks if a byte is available in the serial receive buffer; the result
 is `0` or `1`. Note that these values cannot be confused with any
-ready indicator (`16` or `3`), nor the busy signal `4`.  
+ready indicator (`16` or `3`), nor the busy signal `4`.
 
 The values returned by query commands (such as `255, 7` and `255, 8`)
-are, by default, available for a certain time on the databus and it is
-expected that the CPC will scan the databus and read the presented
-value which it is available.  The time period for which these return
-values are available is configurable, using the `Slow Getters`, `Medium
-Getters`, and `Fast Getters` settings (20 ms, 500 us, 10 us) - commands
-`&E4`, `&E0`, and `&E5`, respectively. 
+are, by default, available for a certain time on the databus, and it
+is expected that the CPC will scan the databus and read the presented
+value while it is available.  The *time period for which these return
+values are available on the databus is configurable,* using the `Slow
+Getters`, `Medium Getters`, and `Fast Getters` settings - these are 20
+ms, 500 us, and 10 us, respectively. The corresponding commands to
+select these modes are `&E4`, `&E0`, and `&E5`. 
 
-A word of warning  -  whereas the result of the "byte available" query command
-`255, 7` cannot be confused with synchronization bytes (`16`, `3`, `4`), 
-this is NOT the case for `255, 8`, `255, 9` and related commands - these
-commands retrieve a serial byte from the receive buffer, and that can be 
-anything. Care has to be taken in order to not confuse the presented 
-return values on the bus with synchronization bytes. 
+A word of warning - whereas the result of the *byte available query
+command* `255, 7` CANNOT be confused with any synchronization byte
+(`16`, `3`, or `4`), this is NOT the case for query commands that can
+return arbitrary bytes from the serial receive buffer, e.g., `255, 8`
+and `255, 9`. Care has to be taken in order to *not confuse the
+presented query return values on the bus with synchronization bytes*,
+which would result in the CPC assuming a wrong position (stage /
+state) of the communication protocol. 
 
-Synchronization was found to be very challenging for high-speed serial
-communication, where the CPC was reading an incoming stream of serial
-bytes, concurrently to the serial data stream being received.
-Asynchronous clocks between the CPC, the ATMega, and non-predictable
-processing delays caused by the interupt service routing (ISR)
-processing and buffering the incoming serial bytes make the protocol
-synchronization problem very challenging.
+Synchronization was found to be *very challenging for high-speed
+serial data processing,* where the CPC is reading an incoming stream
+of serial bytes and concurrently processes and retrieves the serial
+data bytes (i.e., to prevent buffer overflow and hence data
+loss). *Asynchronous clocks* between the CPC, the ATMega MCU, and
+*non-predictable processing delays caused by the interupt service 
+routine (ISR) processing and buffering the incoming serial bytes* make
+the protocol synchronization problem *very challenging.* 
 
-Whereas the so-far discussed protocol (present the return value for a
-certain period of time and special marker bytes to indicate protocol 
-position) works for slower serial byte rates, it causes synchronization
-failures and hence data loss at higher rates. Our solution to this problem
-is the `Handshake Getters` protocol. Rather than presenting the return 
-value for a certain period of time on the databus, after which the 
-firmware moves on to the next stage in the protocol (i.e., presents
-the ready byte and waits for the next command / input byte), in the 
-`Handshake Getters` mode, the firmware leaves the return value on 
-the databus as long as the CPC requires it. The protocol then 
-advances at a CPC-controlled speed. The CPC advances 
-the protocol simply by providing a "clock" signal to the firmware, 
-which then transitions to the next state in the protocol. This "clock" signal is
-a simple `out &fbee,<any byte>` IO request (the actual `<any byte>` doesn't
-matter). Note that, ideally we would have used the `a = inp(&fbee)` 
-IO READ requests, but these are invisible to the ATmega MCU 
-(due to a hardware limitation) and hence, we can only use 
-IO WRITE requests (these trigger a Pin Transition ISR). 
+Whereas the so-far discussed protocol (= the return value of a query
+comand is presented for a certain period of time, and special marker bytes
+are used to indicate protocol state / position) *works for slower serial byte rates,* it
+causes *synchronization failures and hence data loss at higher
+data rates.* 
 
-That way, the CPC now has "enough time" to read the query command
-return byte from the databus. The firmware is literally waiting for
-the CPC to "catch up", to reach the synchronization / rendevous point
-for the "relay race" between the two programs.
+*Our solution to this problem is the `Handshake Getters` protocol.*
+Rather than presenting the return value for a certain period of time
+on the databus, after which the firmware moves on to the next state in
+the protocol (i.e., presents the ready byte and waits for the next
+command / input byte), using the `Handshake Getters` protocol mode,
+the firmware *leaves the return value on the databus as long as the
+CPC requires it.* The protocol then *advances at a CPC-controlled
+speed*, rather than at a firmware delay-time controlled speed (to
+which the CPC might have a hard time to synchronize). Hence, the CPC
+advances the protocol simply by providing a "clock" signal to the
+ATmega firmware, which then transitions to the next state in the
+protocol. This "clock" signal is a simple `out &fbee,<any byte>` IO
+Write Request. Note that the actual `<any byte>` doesn't
+matter. Ideally, we should have used the `a = inp(&fbee)` IO Read
+Request, but these are invisible to the ATmega MCU, due to a hardware
+limitation. Hence, we can only use the IO Write Requests for
+synchronization (these trigger a pin change ISR). 
 
-In case the CPC should reach the synchronization point earlier than
-the ATmega firmware, it only needs to wait "long enough" to be sure
-that the firmware will also have reached the rendevous /
-synchronization point; e.g., a number of microseconds should be enough
-in most circumstances, even if the ISR UART routine is under heavy
-load by buffering incoming serial data. In case the ATmega firmware
-reached the synchronization / rendezvous point first, there is no
-problem, because it will halt execution to wait for the CPC's clock
-signal. Note that, even if the CPC gives the clock signal too early
+That way, the CPC now has *enough time* to read the query command's
+return byte from the databus. The firmware is literally *waiting for
+the CPC to catch up*, to reach the synchronization / rendevous point,
+similar to a "relay race" between the two programs (CPC program and
+ATmega firmware).
+
+There are two cases: In case the CPC should reach the synchronization
+point *before* the ATmega firmware, it only *needs to wait long
+enough* to ensure that the firmware will also have reached the
+rendevous / synchronization point when the clock signal is given by
+the CPC. "Long enough" usually means a number of microseconds - even
+if the ISR UART routine is under heavy load by buffering incoming
+serial data at high baud rates. In case the ATmega firmware reaches
+the synchronization / rendezvous point first, there is no problem - it
+will halt execution to wait for the CPC's clock signal, and hence will
+wait for the "CPC to catch up".
+
+Note that, even if the CPC gives the clock signal a bit *too early*
 (i.e., the ATmega firmware has not reached the synchronization point
-yet), it may still continue correctly, as the IO Write Request issued
-by the CPC for the clock signal will not be unnoticed (i.e., a pin
+yet), it *may still continue correctly,* as the IO Write Request
+issued by the CPC (for the clock signal) will not go unnoticed: a pin
 change ISR will register the signal even if the firmware has not
 reached the synchronization point at where it is waiting for the
-signal; if the signal has been given slightly earlier, the firmware
-will simply proceed, and the protocols are still somewhat
-synchronized. However, it is strongly recommended to not clock the
-firmware "too fast", as it will again result in clock and hence
-protocol synchronization skews that will eventually result in phase
-shifts and hence data loss.)
+signal. If the signal has already been given when the firmware reaches
+the synchronization point, it will simply proceed and NOT halt, and
+the protocols will still be somewhat synchronized. However, it is
+*strongly recommended* to not clock the firmware "too fast" in that
+way, as it will again result in *clock and hence protocol
+synchronization skews* that will eventually result in *protocol phase shifts and
+hence data loss.* 
 
 After the clock signal has been given by the CPC, the 2 protocols are
 in perfect synchronization again.  This `Handshake Getters` protocol
 is enabled using `&E2`. Hence, `&E2` should be enabled for high-speed
-streaming serial communication, before entering the serial mode via
-`&F1`. 
+realtime processing of serial data streams (before entering the serial mode via
+`&F1`). 
 
 The `Handshake Getters` protocol for serial data realtime processing /
-serial data streaming is illustrated in program `SERREC11.BAS` on the
-[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. This program is a simple
-serial receiver terminal in assembler. 
+streaming is illustrated in program `SERREC11.BAS` on the
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. This program is a simple 
+serial receiver terminal in assembler.
 
 The following assembler routine demonstrates how to send a command
 `255, <value in d register>` to the firmware / LF-FS, and how to
@@ -242,19 +256,18 @@ ret
 
 The routines `waitfor3` (`waitfor16`) scan the databus until `3`
 (`16`, resp.) are found. The number of `NOPs` in `.delay` is not
-important, but it cannot be too small - the delay routine needs to
-consume enough time, so that it is guranteed that the firmware has
-already reached the rendevous / synchronization point when the CPC
-sends the clock signal. Else, if not waited long enough, the
-synchronization signal might be lost. 
+important, but it cannot be too small - as explained, the `.delay` 
+routine needs to consume enough time, so that it is guranteed that the
+firmware has already reached the rendevous / synchronization point
+when the CPC sends the clock signal. 
 
 For completeness, serial data realtime processing using the "Medium
 Getters" protocol is illustrated in `SERREC12.BAS` on the
-[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. Note that this program will
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. *Note that this program will
 likely produce synchronization errors for higher baud rates, as
-explained. Hence, `SERREC11.BAS` should be used, employing the
-"Handshake Getters" protocol.
-
+explained.* Hence, `SERREC11.BAS` should be used, employing the
+"Handshake Getters" protocol, and not the "Fast / Medium / Slow
+Getters" protocols.
 
 The following table lists the command bytes in Serial Mode:
 
