@@ -81,6 +81,8 @@ as the CPC databus is sampled with highest frequency.
 
 ## Serial Mode 
 
+** OUTDATED - NEEDS TO BE UPDATED (SOON!) - MAY 2021 **
+
 Some changes here over the LambdaSpeak 3 version. 
 
 The serial mode uses a ring buffer for buffering incoming serial
