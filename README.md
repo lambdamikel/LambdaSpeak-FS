@@ -81,42 +81,129 @@ as the CPC databus is sampled with highest frequency.
 
 ## Serial Mode 
 
-** OUTDATED - NEEDS TO BE UPDATED (SOON!) - MAY 2021 **
-
 Some changes here over the LambdaSpeak 3 version. 
 
 The serial mode uses a ring buffer for buffering incoming serial
-messages (bytes received over RX). The buffer pointer starts again at
-0 if it overflows. Two pointers are used: a read cursor, and an input
-/ fill pointer. Both start at 0. If the read cursor is smaller than
-the input pointer, then a byte is available. Bytes can be read from
-the buffer until the pointers are equal again.
+messages (bytes received over RX) - the receive buffer. The buffer
+pointer starts again at 0 if it overflows. Two pointers are used: a
+read cursor, and an input / fill pointer. Both start at 0. If the read
+cursor is smaller than the input pointer, then a byte is
+available. Bytes can be read from the buffer until the pointers are
+equal again.
 
 There are two different transmission modes. The default should be the
 *direct mode*. In this mode, every byte sent from the CPC to `&FBEE`
-is output directly to the UART (TX). This mode can be used for full-duplex
-communication, i.e., the ring buffer is being used for buffering incoming
-serial bytes, and the output is not buffered, but output directly to the 
-serial port. However, there is also the *buffered mode*, in which *output*
-is not sent directly to the serial port. Rather, it is first put into 
-the buffer, and upon a *flush buffer* command, the whole buffer is 
-sent at once over the serial output (TX) port. Note that this mode
-only allows *half-duplex*, since the input and output buffer is shared. 
-This mode should be rarely needed, but it may result in higher serial 
-transmission rates, because there is no delay in between sending serial 
-bytes caused by the protocol or the CPC having to dispatch the bytes
-to the interface. 
+is output directly to the UART (TX). There is also the *buffered
+mode*, in which *output* is not sent directly to the serial
+port. Rather, it is first put into the transmission buffer, and upon a
+*flush buffer* command, the whole buffer is sent at once over the
+serial output (TX) port. 
 
-To control the UART / serial interface, sequences of control bytes are used,
-and a control sequence starts with `255` / `&FF`. `255` can be be `escaped`
-by sending `255` and then `255` again (so, to transmit `255` as a content
-byte, send `255` twice).
+Note that the receiver and the transmission buffer are separate
+buffers, so even in buffered mode, full-duplex communication is
+possible. 
+
+To control the UART / serial interface, sequences of control bytes are
+used, and a control sequence starts with `255` / `&FF`. `255` can be
+be `escaped` by sending `255` and then `255` again (so, to transmit
+`255` as a content byte, send `255` twice).
 
 The listener / command processing loop uses the READY byte 16 on the
 IO port `&FBEE` to indicate that it is ready to receive the next
-command or byte (note though, that the sub-mode 10 and 50 listeners do
-not use the ready byte, see below). The byte 0 indicates that
-LambdaSpeak 3 is busy.
+command or byte. Commands start with `255`, followed by another byte
+to determine the command. After `255`, the READY byte indicator
+changes to 3. Using a different READY byte here (i.e., 3 instead of
+16) gives a clear indication of the current position in the
+communication protocol. 
+
+Also note that the sub-mode 10 and 50 listeners *do not use any 
+ready byte(s)*, see below. 
+
+Certain commands return values on the databus, i.e., query commands
+such as `255, 7` and `255, 9`. An intermittent (transient) value `4`
+indicates that LambdaSpeak is busy. The important command `255, 7`
+checks if a byte is available in the serial receive buffer; the result
+is `0` or `1`. Note that these values cannot be confused with any
+ready indicator (`16` or `3`), nor the busy signal `4`.  
+
+The values returned by query commands (such as `255, 7` and `255, 8`)
+are, by default, available for a certain time on the databus and it is
+expected that the CPC will scan the databus and read the presented
+value which it is available.  The time period for which these return
+values are available is configurable, using the `Slow Getters`, `Medium
+Getters`, and `Fast Getters` settings (20 ms, 500 us, 10 us) - commands
+`&E4`, `&E0`, and `&E5`, respectively. 
+
+A word of warning  -  whereas the result of the "byte available" query command
+`255, 7` cannot be confused with synchronization bytes (`16`, `3`, `4`), 
+this is NOT the case for `255, 8`, `255, 9` and related commands - these
+commands retrieve a serial byte from the receive buffer, and that can be 
+anything. Care has to be taken in order to not confuse the presented 
+return values on the bus with synchronization bytes. 
+
+Synchronization was found to be very challenging for high-speed serial
+communication, where the CPC was reading an incoming stream of serial
+bytes, concurrently to the serial data stream being received.
+Asynchronous clocks between the CPC, the ATMega, and non-predictable
+processing delays caused by the interupt service routing (ISR)
+processing and buffering the incoming serial bytes make the protocol
+synchronization problem very challenging.
+
+Whereas the so-far discussed protocol (present the return value for a
+certain period of time and special marker bytes to indicate protocol 
+position) works for slower serial byte rates, it causes synchronization
+failures and hence data loss at higher rates. Our solution to this problem
+is the `Handshake Getters` protocol. Rather than presenting the return 
+value for a certain period of time on the databus, after which the 
+firmware moves on to the next stage in the protocol (i.e., presents
+the ready byte and waits for the next command / input byte), in the 
+`Handshake Getters` mode, the firmware leaves the return value on 
+the databus as long as the CPC requires it. The protocol then 
+advances by providing a "clock" signal from the CPC to the firmware, 
+after which the next state is reached. This "clock" signal is
+a simple `out &fbee,<any byte>` IO request (the presented byte doesn't
+matter). That way, the CPC has enough time to read the presented byte, 
+since the firmware is waiting for the CPC to catch up. In case
+the CPC should reach the synchronization point earlier, it only needs
+to wait a long enough time to be sure that the firmware will also have
+reached the rendevous / synchronization point. After the "clock" signal 
+has been given, the 2 protocols are in perfect synchronization again. 
+This `Handshake Getters` protocol is enabled using `&E2`. Hence, `&E2`
+should be enabled for high-speed streaming serial communication, before
+entering the serial mode via `&F1`. 
+
+The `Handshake Getters` protocol is illustrated in program `SERREC11.BAS`
+on the [`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. Note that the "clock" signal
+corresponds to the last `out (c),a` in the following routine - this routine 
+sends command `255, <value in d register>` to the firmware / LF-FS, and also 
+returns the result of the command (in the accumulator, `a`): 
+
+```
+.serialdout
+push de
+call waitfor16
+ld a,255
+ld bc,&fbee
+out (c),a
+call waitfor3
+pop de
+ld a,d
+ld bc,&fbee
+out (c),a
+call delay
+in a,(c)
+ld bc,&fbee
+out (c),a
+ret 
+
+.delay
+nop:nop:nop:nop:nop:nop:nop
+ret 
+``` 
+
+The routines `waitfor3` (`waitfor16`) scan the databus until `3`
+(`16`, resp.) are found.
+
 
 The following table lists the command bytes in Serial Mode:
 
@@ -181,8 +268,10 @@ proceeds as follows:
 
 The sub-mode 10 and sub-mode 50 protocols are best understood by
 looking at the provided MAXAM examplary assembler programs on the
-[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk; see `MODE10.BAS` and
-`MODE50.BAS`.
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk; see `MODE10A.BAS` and
+`MODE50A.BAS`.
+
+Note that these modes are not specific to MIDI; they also work for other baud rates, and for arbitrary serial data "streaming". 
 
 More details on [TFM's homepage.](http://futureos.cpc-live.com/) 
 
