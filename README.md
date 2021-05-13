@@ -97,7 +97,10 @@ is output directly to the UART (TX). There is also the *buffered
 mode*, in which *output* is not sent directly to the serial
 port. Rather, it is first put into the transmission buffer, and upon a
 *flush buffer* command, the whole buffer is sent at once over the
-serial output (TX) port. 
+serial output (TX) port. Have a look at the BASIC programs 
+`SERIAL2.BAS` for the buffered mode, and `SERIAL3.BAS` for the direct
+mode. Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
+buffer; for INCOMING messages, the RECEIVE BUFFER is ALWAYS being used. 
 
 Note that the receiver and the transmission buffer are separate
 buffers, so even in buffered mode, full-duplex communication is
@@ -172,11 +175,19 @@ This `Handshake Getters` protocol is enabled using `&E2`. Hence, `&E2`
 should be enabled for high-speed streaming serial communication, before
 entering the serial mode via `&F1`. 
 
-The `Handshake Getters` protocol is illustrated in program `SERREC11.BAS`
-on the [`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. Note that the "clock" signal
-corresponds to the last `out (c),a` in the following routine - this routine 
-sends command `255, <value in d register>` to the firmware / LF-FS, and also 
-returns the result of the command (in the accumulator, `a`): 
+The `Handshake Getters` protocol for serial data realtime processing /
+serial data streaming is illustrated in program `SERREC11.BAS` on the
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. This program is a simple
+serial receiver terminal in assembler. 
+
+The following assembler routine demonstrates how to send a command
+`255, <value in d register>` to the firmware / LF-FS, and how to
+retrieve the result returned by the command in case of a query
+command. The result is found in the accumulator, `a`. 
+
+Note that the "clock" signal corresponds to the last `out (c),a` 
+in this routine, and how the the `waitfor<n>` calls are used 
+to synchronize the protocol between the CPC and the firmware: 
 
 ```
 .serialdout
@@ -202,7 +213,19 @@ ret
 ``` 
 
 The routines `waitfor3` (`waitfor16`) scan the databus until `3`
-(`16`, resp.) are found.
+(`16`, resp.) are found. The number of `NOPs` in `.delay` is not
+important, but it cannot be too small - the delay routine needs to
+consume enough time, so that it is guranteed that the firmware has
+already reached the rendevous / synchronization point when the CPC
+sends the clock signal. Else, if not waited long enough, the
+synchronization signal might be lost. 
+
+For completeness, serial data realtime processing using the "Medium
+Getters" protocol is illustrated in `SERREC12.BAS` on the
+[`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. Note that this program will
+likely produce synchronization errors for higher baud rates, as
+explained. Hence, `SERREC11.BAS` should be used, employing the
+"Handshake Getters" protocol.
 
 
 The following table lists the command bytes in Serial Mode:
