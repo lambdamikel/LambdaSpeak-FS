@@ -2,6 +2,19 @@
 
 ## Latest News 
 
+TFM has sold 20 LSFS by now! Congrats! 
+
+Also, check out the new complex MIDI song playback YouTube demo video
+- with an additional E-Wave sound module, LSFS makes perfect MIDI
+playback module.  The demo songs are on the
+[`MIDI.DSK`](cpc/lambda/MIDI.dsk).
+
+![EWave](images/ewave.jpg) 
+
+[YouTube Video - Complex MIDI Playback with LSFS & E-Wave Soundcard](https://youtu.be/5fY1LYohHOA)
+
+## Older News 
+
 The first batch of 10 was produced and distributed by TFM! 
 
 ![LS FS Batch Front](images/batch1-front.jpg) 
@@ -13,6 +26,8 @@ The first batch of 10 was produced and distributed by TFM!
 ![LS FS Back](images/ls-fs-2.jpg) 
 
 ## Demos 
+
+[YouTube Video - Complex MIDI Playback with LSFS & E-Wave Soundcard](https://youtu.be/5fY1LYohHOA)
 
 [YouTube Video 1](https://youtu.be/KedbNqoHSpE)
 
