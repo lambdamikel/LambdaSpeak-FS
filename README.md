@@ -8,9 +8,25 @@ Also, check out the new complex MIDI song playback YouTube demo video - with an 
 
 ![EWave](images/ewave.jpg) 
 
-[YouTube Video - Complex MIDI Playback with LSFS & X2GS Roland Certified MIDI Soundcard](https://youtu.be/zATfSDlGLWw)
+[YouTube Video - Complex MIDI Playback with LSFS & X2GS Roland Certified MIDI Soundcard](https://youtu.be/KVlNmBkiy2Y)
 
 [YouTube Video - Complex MIDI Playback with LSFS & E-Wave Soundcard](https://youtu.be/5fY1LYohHOA)
+
+The connections for the E-Wave or X2GS are as follows - with the S2 connector facing towards you, oriented along the expansion port / MX4 IDC box header connector:
+
+    1U 2U 3U 4U 5U 6U 7U 8U 9U AU BU CU DU 
+    1L 2L 3L 4L 5L 6L 7L 8L 9L AL BL CL DL
+
+    (U = Upper Pin Row, L = Lower Pin Row),
+
+then make to following connection to LSFS using DuPoint cables: 
+
+    GND = 9L
+    5V VCC = BU
+    TX = CU
+    Stereo Left = 2U
+    Stereo Right = 4U
+    Stereo GND = 4L 
 
 ## Older News 
 
