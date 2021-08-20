@@ -199,12 +199,12 @@ are used to indicate protocol state / position) *works for slower serial byte ra
 causes *synchronization failures and hence data loss at higher
 data rates.* 
 
-*Our solution to this problem is the new `Handshake Getters`
+*Our solution to this problem is the new **Handshake Getters** 
 protocol.* Rather than presenting the return value for a certain
 period of time on the databus, after which the firmware moves on to
 the next state in the protocol (i.e., presents the ready byte and
-waits for the next command / input byte), by using this new `Handshake
-Getters` protocol mode instead, the firmware *leaves the return value
+waits for the next command / input byte), by using this new **Handshake
+Getters** protocol mode instead, the firmware *leaves the return value
 on the databus as long as the CPC requires it.* The protocol then
 *advances at a CPC-controlled speed*, rather than at a firmware
 delay-time controlled speed (to which the CPC might have a hard time
