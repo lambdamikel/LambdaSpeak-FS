@@ -115,8 +115,9 @@ Some changes here over the LambdaSpeak 3 version.
 
 The serial mode uses a ring buffer for buffering incoming serial
 messages (bytes received over RX) - the receive buffer. This buffer can 
-hold **256 bytes.** The buffer
-pointer starts again at 0 if it overflows. Two pointers are used: a
+hold **256 bytes.** If it is full, it stops receiving, so 
+incoming bytes might get lost if the are not retrieved from the 
+buffer in a timely manner.  Two pointers are used: a
 read cursor, and an input / fill pointer. Both start at 0. If the read
 cursor is smaller than the input pointer, then a byte is
 available. Bytes can be read from the buffer until the pointers are
@@ -129,9 +130,13 @@ mode*, in which *output* is not sent directly to the serial
 port. Rather, it is first put into the transmission buffer, and upon a
 *flush buffer* command, the whole buffer is sent at once over the
 serial output (TX) port. This send / transmission buffer can hold 
-**268 bytes**. Have a look at the BASIC programs 
+**268 bytes**. Like the input buffer, bytes will get lost when the 
+buffer is full; hence, it must be *flushed* in a timely manner. 
+Have a look at the BASIC programs 
 `SERIAL2.BAS` for the buffered mode, and `SERIAL3.BAS` for the direct
-mode. Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
+mode. 
+
+Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
 buffer; for INCOMING messages, the RECEIVE BUFFER is ALWAYS being used. 
 
 Note that the receiver and the transmission buffer are separate
