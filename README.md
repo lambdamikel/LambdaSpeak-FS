@@ -114,7 +114,8 @@ as the CPC databus is sampled with highest frequency.
 Some changes here over the LambdaSpeak 3 version. 
 
 The serial mode uses a ring buffer for buffering incoming serial
-messages (bytes received over RX) - the receive buffer. The buffer
+messages (bytes received over RX) - the receive buffer. This buffer can 
+hold **256 bytes.** The buffer
 pointer starts again at 0 if it overflows. Two pointers are used: a
 read cursor, and an input / fill pointer. Both start at 0. If the read
 cursor is smaller than the input pointer, then a byte is
@@ -127,7 +128,8 @@ is output directly to the UART (TX). There is also the *buffered
 mode*, in which *output* is not sent directly to the serial
 port. Rather, it is first put into the transmission buffer, and upon a
 *flush buffer* command, the whole buffer is sent at once over the
-serial output (TX) port. Have a look at the BASIC programs 
+serial output (TX) port. This send / transmission buffer can hold 
+**268 bytes**. Have a look at the BASIC programs 
 `SERIAL2.BAS` for the buffered mode, and `SERIAL3.BAS` for the direct
 mode. Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
 buffer; for INCOMING messages, the RECEIVE BUFFER is ALWAYS being used. 
@@ -316,11 +318,9 @@ explained.* Hence, `SERREC11.BAS` should be used, employing the
 "Handshake Getters" protocol, and not the "Fast / Medium / Slow
 Getters" protocols.
 
-The following table lists the command bytes in Serial Mode:
-
 The following table lists the command bytes in Serial Mode. 
 
-Please note that the *ring input buffer* has a capacity of 256 bytes*, 
+Please note that the *ring input buffer has a capacity of 256 bytes*, 
 and the *transmit / send buffer has a capacity of 268 bytes*: 
 
 ----------------------------------------------------------------------------------------------------------------
