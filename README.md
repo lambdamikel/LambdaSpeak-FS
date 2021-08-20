@@ -266,12 +266,12 @@ synchronization skews* that will eventually result in *protocol phase shifts and
 hence data loss.* 
 
 After the clock signal has been given by the CPC, the 2 protocols are
-in perfect synchronization again.  This `Handshake Getters` protocol
+in perfect synchronization again.  This **Handshake Getters** protocol
 is enabled using `&E2`. Hence, `&E2` should be enabled for high-speed
 realtime processing of serial data streams (before entering the serial mode via
 `&F1`). 
 
-The `Handshake Getters` protocol for serial data realtime processing /
+The **Handshake Getters** protocol for serial data realtime processing /
 streaming is illustrated in program `SERREC11.BAS` on the
 [`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. This program is a simple 
 serial receiver terminal in assembler.
