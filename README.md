@@ -338,7 +338,7 @@ and the *transmit / send buffer has a capacity of 268 bytes*:
 | &FF, 8          | Get byte from buffer at read cursor position          | Byte will appear on databus        | 
 | &FF, 9          | Same as &FF, 8                                        | Same as &FF, 8                     | 
 | &FF, 10         | SERIAL MONITOR SUB MODE FOR RX / SERIAL IN            | For example, realtime MIDI IN      |         
-| &FF, 11, lo, hi | Set read cursor to position hi*256 + lo, lo must be 0 | Use &FF, 8 to read byte at pos     | 
+| &FF, 11, lo, hi | Set read cursor to position hi*256 + lo, hi must be 0 | Use &FF, 8 to read byte at pos     | 
 | &FF, 12         | Set read cursor to 0                                  | Does not erase the buffer          |  
 | &FF, 13         | Set read cursor to pos of last received byte          | Read cursor points to last byte    | 
 | &FF, 14         | Get mode - direct or buffered mode                    | 1 = direct mode, 0 = buffered      | 
