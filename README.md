@@ -114,8 +114,10 @@ as the CPC databus is sampled with highest frequency.
 Some changes here over the LambdaSpeak 3 version. 
 
 The serial mode uses a ring buffer for buffering incoming serial
-messages (bytes received over RX) - the receive buffer. The buffer
-pointer starts again at 0 if it overflows. Two pointers are used: a
+messages (bytes received over RX) - the receive buffer. This buffer can 
+hold **256 bytes.** If it is full, it stops receiving, so 
+incoming bytes might get lost if the are not retrieved from the 
+buffer in a timely manner.  Two pointers are used: a
 read cursor, and an input / fill pointer. Both start at 0. If the read
 cursor is smaller than the input pointer, then a byte is
 available. Bytes can be read from the buffer until the pointers are
@@ -127,9 +129,14 @@ is output directly to the UART (TX). There is also the *buffered
 mode*, in which *output* is not sent directly to the serial
 port. Rather, it is first put into the transmission buffer, and upon a
 *flush buffer* command, the whole buffer is sent at once over the
-serial output (TX) port. Have a look at the BASIC programs 
+serial output (TX) port. This send / transmission buffer can hold 
+**268 bytes**. Like the input buffer, bytes will get lost when the 
+buffer is full; hence, it must be *flushed* in a timely manner. 
+Have a look at the BASIC programs 
 `SERIAL2.BAS` for the buffered mode, and `SERIAL3.BAS` for the direct
-mode. Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
+mode. 
+
+Note that `buffered` only refers to the OUTGOING / TRANSMISSION 
 buffer; for INCOMING messages, the RECEIVE BUFFER is ALWAYS being used. 
 
 Note that the receiver and the transmission buffer are separate
@@ -192,12 +199,12 @@ are used to indicate protocol state / position) *works for slower serial byte ra
 causes *synchronization failures and hence data loss at higher
 data rates.* 
 
-*Our solution to this problem is the new `Handshake Getters`
+*Our solution to this problem is the new **Handshake Getters** 
 protocol.* Rather than presenting the return value for a certain
 period of time on the databus, after which the firmware moves on to
 the next state in the protocol (i.e., presents the ready byte and
-waits for the next command / input byte), by using this new `Handshake
-Getters` protocol mode instead, the firmware *leaves the return value
+waits for the next command / input byte), by using this new **Handshake
+Getters** protocol mode instead, the firmware *leaves the return value
 on the databus as long as the CPC requires it.* The protocol then
 *advances at a CPC-controlled speed*, rather than at a firmware
 delay-time controlled speed (to which the CPC might have a hard time
@@ -259,12 +266,12 @@ synchronization skews* that will eventually result in *protocol phase shifts and
 hence data loss.* 
 
 After the clock signal has been given by the CPC, the 2 protocols are
-in perfect synchronization again.  This `Handshake Getters` protocol
+in perfect synchronization again.  This **Handshake Getters** protocol
 is enabled using `&E2`. Hence, `&E2` should be enabled for high-speed
 realtime processing of serial data streams (before entering the serial mode via
 `&F1`). 
 
-The `Handshake Getters` protocol for serial data realtime processing /
+The **Handshake Getters** protocol for serial data realtime processing /
 streaming is illustrated in program `SERREC11.BAS` on the
 [`LSFS.DSK`](cpc/lambda/LSFS.dsk) disk. This program is a simple 
 serial receiver terminal in assembler.
@@ -316,40 +323,44 @@ explained.* Hence, `SERREC11.BAS` should be used, employing the
 "Handshake Getters" protocol, and not the "Fast / Medium / Slow
 Getters" protocols.
 
-The following table lists the command bytes in Serial Mode:
+The following table lists the command bytes in Serial Mode. 
 
--------------------------------------------------------------------------------------------------------
-| Byte Sequence   | Explanation                                   | Note                              |
-|-----------------|-----------------------------------------------|-----------------------------------|
-| 0...&FE         | Send Byte 0...254                             | Either buffered or TX directly    |
-| &FF, &FF        | Send Byte 255                                 | Either buffered or TX directly    |
-| &FF, 1, x       | Read x from bus and TX x                      | Transmit x directly to TX         |
-| &FF, 2          | Send buffer to TX                             | Flush buffer, max 256 + 268 bytes |
-| &FF, 3          | Get low byte number of bytes in input buffer  | Check if bytes have been received | 
-| &FF, 4          | Get high byte number of bytes in input buffer | Check if bytes have been received | 
-| &FF, 5          | Check if send/receive buffer is full          | 1 if full, 0 otherwise            | 
-| &FF, 6          | Reset read and input cursors                  | Clears receive buffer and cursors | 
-| &FF, 7          | Check if another byte can be read from buffer | 1 if read cursor < input cursor   | 
-| &FF, 8          | Get byte from buffer at read cursor position  | Byte will appear on databus       | 
-| &FF, 9          | Get byte at read cursor position, inc. cursor | Read receive buffer byte by byte  | 
-| &FF, 10         | SERIAL MONITOR SUB MODE FOR RX / SERIAL IN    | For example, realtime MIDI IN     |         
-| &FF, 11, lo, hi | Set read cursor to position hi*256 + lo       | Use &FF, 8 to read byte at pos    | 
-| &FF, 12         | Set read cursor to 0                          | Does not erase the buffer         |  
-| &FF, 13         | Set read cursor to input cursor position -1   | Read cursor points to last byte   | 
-| &FF, 14         | Get mode - direct or buffered mode            | 1 = direct mode, 0 = buffered     | 
-| &FF, 15         | Speak mode (BAUD, Width, Parity, Stop Bits)   | Confirmations need to be enabled  | 
-| &FF, 16         | Direct mode on                                | No CPC input buffering, direct TX | 
-| &FF, 17         | Direct mode off                               | Buffer CPC input, then &FF, 2     | 
-| &FF, 18         | Get current read cursor position              | Cur. read pos. in receive buffer  | 
-| &FF, 20         | Quit and reset Serial Mode                    | Like Reset Button                 | 
-| &FF, 30, baud   | Set BAUD rate: baud = 0..15, see Baud Table   | Default 9600 (baud = 2, or > 15)  |   
-| &FF, 31, width  | Set word width: width = 5...8                 | Default 8 bits                    | 
-| &FF, 32, par.   | Set parity: 0, 1, 2                           | 0=No (Default), 1=Odd, 2=Even     | 
-| &FF, 33, stop   | Set number of stop bits: 1, 2                 | 1 = Default                       | 
-| &FF, 50         | SERIAL MONITOR SUB MODE RX AND TX (SERIAL IO) | For example, realtime MIDI IN/OUT |         
-| &FF, &C3        | Speak Current Mode Info                       | Same &C3 as in speech modes       | 
-| &FF, &F2        | Get Mode Descriptor Byte                      | Same &F2 as in speech modes       | 
--------------------------------------------------------------------------------------------------------
+Please note that the *ring input buffer has a capacity of 256 bytes*, 
+and the *transmit / send buffer has a capacity of 268 bytes*: 
+
+----------------------------------------------------------------------------------------------------------------
+| Byte Sequence   | Explanation                                           | Note                               |
+|-----------------|-------------------------------------------------------|------------------------------------|
+| 0...&FE         | Send Byte 0...254                                     | Either buffered or TX directly     |
+| &FF, &FF        | Send Byte 255                                         | Either buffered or TX directly     |
+| &FF, 1, x       | Read x from bus and TX x                              | Transmit x directly to TX          |
+| &FF, 2          | Send buffer to TX                                     | Flush buffer, hold max 268 bytes   |
+| &FF, 3          | Get low byte number of pending bytes in input buffer  | Check number of bytes to retrieve  | 
+| &FF, 4          | Get high byte number of pending bytes in input buffer | Check number of bytes to retrieve  | 
+| &FF, 5          | Check if input buffer is full                         | 1 if full, 0 otherwise             | 
+| &FF, 6          | Reset read and input cursors                          | Sets read and input cursors to 0   | 
+| &FF, 7          | Check if byte can be read from input buffer           | 1 if a pending byte is available   | 
+| &FF, 8          | Get byte from buffer at read cursor position          | Byte will appear on databus        | 
+| &FF, 9          | Same as &FF, 8                                        | Same as &FF, 8                     | 
+| &FF, 10         | SERIAL MONITOR SUB MODE FOR RX / SERIAL IN            | For example, realtime MIDI IN      |         
+| &FF, 11, lo, hi | Set read cursor to position hi*256 + lo, hi must be 0 | Use &FF, 8 to read byte at pos     | 
+| &FF, 12         | Set read cursor to 0                                  | Does not erase the buffer          |  
+| &FF, 13         | Set read cursor to pos of last received byte          | Read cursor points to last byte    | 
+| &FF, 14         | Get mode - direct or buffered mode                    | 1 = direct mode, 0 = buffered      | 
+| &FF, 15         | Speak mode (BAUD, Width, Parity, Stop Bits)           | Confirmations need to be enabled   | 
+| &FF, 16         | Direct mode on                                        | No send buffer, output directly TX | 
+| &FF, 17         | Direct mode off                                       | Use send buffer, flush with &FF, 2 | 
+| &FF, 18         | Get current read cursor position                      | Get read cursor pos. input buffer  | 
+| &FF, 20         | Quit and reset Serial Mode                            | Like Reset Button                  | 
+| &FF, 30, baud   | Set BAUD rate: baud = 0..15, see Baud Table           | Default 9600 (baud = 2, or > 15)   |   
+| &FF, 31, width  | Set word width: width = 5...8                         | Default 8 bits                     | 
+| &FF, 32, par.   | Set parity: 0, 1, 2                                   | 0=No (Default), 1=Odd, 2=Even      | 
+| &FF, 33, stop   | Set number of stop bits: 1, 2                         | 1 = Default                        | 
+| &FF, 50         | SERIAL MONITOR SUB MODE RX AND TX (SERIAL IO)         | For example, realtime MIDI IN/OUT  |         
+| &FF, &C3        | Speak Current Mode Info                               | Same &C3 as in speech modes        | 
+| &FF, &F2        | Get Mode Descriptor Byte                              | Same &F2 as in speech modes        | 
+----------------------------------------------------------------------------------------------------------------
+
 
 Sub-modes 10 and 50 are meant for real-time serial (especially, MIDI)
 *streaming*. Sub-mode 10 for MIDI IN input only (but echoes incoming
