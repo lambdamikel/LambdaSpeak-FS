@@ -1,6 +1,10 @@
 # LambdaSpeak FS
 
-## Latest News 
+## Latest News
+
+[I have written down the "Making of LambdaSpeak".](https://github.com/lambdamikel/LambdaSpeak3/blob/master/history.md)
+
+## Older News 
 
 TFM has sold 20 LSFS by now! Congrats! 
 
@@ -27,8 +31,6 @@ then make to following connection to LSFS using DuPoint cables:
     Stereo Left = 2U
     Stereo Right = 4U
     Stereo GND = 4L 
-
-## Older News 
 
 The first batch of 10 was produced and distributed by TFM! 
 
